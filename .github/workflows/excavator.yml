@@ -1,0 +1,31 @@
+name: Excavator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2,14 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  excavate:
+    name: Excavate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Scoop
+        shell: pwsh
+        run: |
+          iwr -useb get.scoop.sh | iex
+          # 持久化 scoop 路径，供 excavator 内部步骤使用
+          Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\scoop\shims" -Encoding utf8
+          $env:Path = [Environment]::GetEnvironmentVariable('PATH', 'User') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'Machine')
+          scoop --version
+
+      - name: Excavate
+        uses: ScoopInstaller/GithubActions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_UPDATED: '1'

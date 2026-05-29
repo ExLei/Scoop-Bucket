@@ -1,0 +1,47 @@
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code
+.vscode/
+*.code-workspace
+.vs/
+
+# PowerShell
+*.ps1
+!bucket/*.ps1
+!bin/*.ps1
+
+# Scoop
+bin/
+!bin/checkver.ps1
+!bin/checkurls.ps1
+!bin/missing-checkver.ps1
+!bin/auto-pr.ps1
+!bin/format.ps1
+!bin/scoop.ps1
+!bin/test.ps1
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+*.lnk
+
+# Temp
+tmp/
+temp/
+*.log
+.agents/skills/
+
+AGENTS.md
