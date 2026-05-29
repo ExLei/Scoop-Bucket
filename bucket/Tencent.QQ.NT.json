@@ -1,0 +1,62 @@
+{
+    "version": "9.9.31.260528",
+    "description": "(NT 版本) QQ，腾讯的一款聊天通讯工具",
+    "homepage": "https://im.qq.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://rule.tencent.com/rule/46a15f24-e42c-4cb6-a308-2347139b1201"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.31/release/092069d7/QQ_9.9.31_260528_x64_01.exe#/dl.7z",
+            "hash": "0beb5cb4ff776cba822caa0abadbd53f5892f12628a86dabea1b372c82c086bc"
+        }
+    },
+    "extract_dir": "Files",
+    "pre_install": [
+        "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+        "$persistDir = \"$persist_dir\\QQ_Data\"",
+        "if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force }",
+        "if (Test-Path $dataDir) {",
+        "    Get-ChildItem $dataDir -Directory | ForEach-Object {",
+        "        $target = Join-Path $persistDir $_.Name",
+        "        if (!(Test-Path $target)) { Move-Item $_.FullName $target }",
+        "        New-Item -ItemType Junction -Path $_.FullName -Target $target -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+        "if (!(Test-Path $dataDir)) { New-Item -ItemType Directory $dataDir -Force }"
+    ],
+    "shortcuts": [
+        [
+            "QQ.exe",
+            "..\\QQ"
+        ]
+    ],
+    "persist": "QQ_Data",
+    "checkver": {
+        "script": [
+            "# 使用腾讯 CDN 查询最新版本",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
+        ],
+        "regex": "QQNT/[\\d.]+/([\\w]+)/([\\w]+)/QQ_([\\d.]+)[-_]([\\d]+)_x64_01.exe",
+        "replace": "${3}.${4}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://qqdl.gtimg.cn/qqfile/QQNT/$match3/$match1/$match2/QQ_$match3_$match4_x64_01.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
