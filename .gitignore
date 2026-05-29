@@ -45,3 +45,6 @@ temp/
 .agents/skills/
 
 AGENTS.md
+
+# Extras contribution staging (git-ignored, not for this bucket)
+contrib-extras/

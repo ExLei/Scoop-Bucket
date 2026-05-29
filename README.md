@@ -13,20 +13,20 @@ scoop install exlei/tencent-qq-nt
 scoop install exlei/tencent-weixin
 scoop install exlei/quickclipboard
 scoop install exlei/fluxdown
-scoop install exlei/exhyperv
 scoop install exlei/velotype
+scoop install exlei/zedg
 ```
 
 ## 包含的软件
 
 | 软件 | 安装命令 | 版本 | 描述 |
 |------|---------|------|------|
-| ExHyperV | `scoop install exlei/exhyperv` | 1.4.3 | Hyper-V 图形化管理神器，轻松掌握 Hyper-V 高级功能 |
 | QQ | `scoop install exlei/tencent-qq-nt` | 9.9.31.260528 | QQ NT 版本，腾讯的一款聊天通讯工具 |
 | 微信 | `scoop install exlei/tencent-weixin` | 4.1.10.24 | 微信，腾讯的一款聊天通讯工具 |
 | QuickClipboard | `scoop install exlei/quickclipboard` | 0.3.2 | 剪贴板管理工具 (便携版)，支持文本/图片/文件历史、截图/OCR |
 | FluxDown | `scoop install exlei/fluxdown` | 0.1.42 | Rust 驱动的多协议下载管理器 (便携版) |
 | Velotype | `scoop install exlei/velotype` | 0.5.0 | 基于 Rust + GPUI 的原生 Markdown 编辑器（便携版），支持所见即所得与源码编辑双模式 |
+| ZedG | `scoop install exlei/zedg` | 1.4.2 | Zed Editor（汉化版），基于 Rust 的高性能代码编辑器本地化版本 |
 
 ## 自动更新
 
