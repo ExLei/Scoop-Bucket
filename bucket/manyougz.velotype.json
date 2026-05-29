@@ -1,0 +1,39 @@
+{
+    "version": "0.5.0",
+    "description": "Velotype - 基于 Rust + GPUI 的原生 Markdown 编辑器，支持所见即所得 (WYSIWYG) 与源码编辑双模式 | A native Rust Markdown editor with WYSIWYG and source editing modes",
+    "homepage": "https://github.com/manyougz/velotype",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/manyougz/velotype/blob/main/LICENSE-APACHE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/manyougz/velotype/releases/download/v0.5.0/velotype-v0.5.0-windows-x86_64.zip",
+            "hash": "581959dd46541eb1a38d288dc02de2f94cf1c8b5a41928db4d6ed2e9f469de53"
+        },
+        "arm64": {
+            "url": "https://github.com/manyougz/velotype/releases/download/v0.5.0/velotype-v0.5.0-windows-aarch64.zip",
+            "hash": "2ea2cc3cc41ab2b0de9eb92ba42c477737426bca52aead504a27230220fff90d"
+        }
+    },
+    "bin": "velotype.exe",
+    "shortcuts": [
+        ["velotype.exe", "..\\Velotype"]
+    ],
+    "checkver": {
+        "github": "https://github.com/manyougz/velotype"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/manyougz/velotype/releases/download/v$version/velotype-v$version-windows-x86_64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/manyougz/velotype/releases/download/v$version/velotype-v$version-windows-aarch64.zip"
+            }
+        },
+        "hash": {
+            "mode": "github"
+        }
+    }
+}

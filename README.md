@@ -14,6 +14,7 @@ scoop install exlei/tencent-weixin
 scoop install exlei/quickclipboard
 scoop install exlei/fluxdown
 scoop install exlei/exhyperv
+scoop install exlei/velotype
 ```
 
 ## 包含的软件
@@ -25,6 +26,7 @@ scoop install exlei/exhyperv
 | 微信 | `scoop install exlei/tencent-weixin` | 4.1.10.24 | 微信，腾讯的一款聊天通讯工具 |
 | QuickClipboard | `scoop install exlei/quickclipboard` | 0.3.2 | 剪贴板管理工具 (便携版)，支持文本/图片/文件历史、截图/OCR |
 | FluxDown | `scoop install exlei/fluxdown` | 0.1.42 | Rust 驱动的多协议下载管理器 (便携版) |
+| Velotype | `scoop install exlei/velotype` | 0.5.0 | 基于 Rust + GPUI 的原生 Markdown 编辑器（便携版），支持所见即所得与源码编辑双模式 |
 
 ## 自动更新
 
