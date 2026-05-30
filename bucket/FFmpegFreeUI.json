@@ -14,8 +14,10 @@
         }
     },
     "pre_install": [
-        "# 为 Settings.json 创建空文件占位，防止 Scoop 将 persist 链接创建为文件夹",
-        "if (!(Test-Path \"$dir\\Settings.json\")) { New-Item -ItemType File \"$dir\\Settings.json\" -Force | Out-Null }",
+        "# 为 Settings.json 创建 JSON 对象占位，防止 Scoop 将 persist 链接创建为文件夹",
+        "if (!(Test-Path \"$dir\\Settings.json\")) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
+        "# 修复已存在的空 Settings.json（首次安装时创建的空文件导致 JSON 解析失败）",
+        "if ((Get-Item \"$dir\\Settings.json\" -ErrorAction SilentlyContinue).Length -eq 0) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
         "# 确保 Presets 和 Plugin 是目录",
         "if (!(Test-Path \"$dir\\Presets\")) { New-Item -ItemType Directory \"$dir\\Presets\" -Force | Out-Null }",
         "if (!(Test-Path \"$dir\\Plugin\")) { New-Item -ItemType Directory \"$dir\\Plugin\" -Force | Out-Null }"
