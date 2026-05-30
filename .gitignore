@@ -14,7 +14,7 @@ $RECYCLE.BIN/
 !bin/*.ps1
 
 # Scoop
-bin/
+!bin/
 !bin/checkver.ps1
 !bin/checkurls.ps1
 !bin/missing-checkver.ps1
@@ -22,6 +22,7 @@ bin/
 !bin/format.ps1
 !bin/scoop.ps1
 !bin/test.ps1
+!bin/lint.ps1
 
 # IDE
 .idea/

@@ -14,21 +14,12 @@ permissions:
 
 jobs:
   excavate:
-    name: Excavate
+    name: Excavator
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v5
 
-      - name: Install Scoop
-        shell: pwsh
-        run: |
-          iwr -useb get.scoop.sh | iex
-          # 持久化 scoop 路径，供 excavator 内部步骤使用
-          Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\scoop\shims" -Encoding utf8
-          $env:Path = [Environment]::GetEnvironmentVariable('PATH', 'User') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'Machine')
-          scoop --version
-
-      - name: Excavate
+      - name: Excavator
         uses: ScoopInstaller/GithubActions@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,8 +4,13 @@ on:
   push:
     paths:
       - 'bucket/*.json'
+      - 'bin/lint.ps1'
     branches:
       - main
+  pull_request:
+    paths:
+      - 'bucket/*.json'
+      - 'bin/lint.ps1'
 
 permissions:
   contents: read
@@ -17,125 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Validate Manifests
+      - name: Lint Manifests
         shell: pwsh
-        run: |
-          $hasError = $false
-          $files = Get-ChildItem bucket/*.json
-          if ($files.Count -eq 0) {
-              Write-Host "::warning::Bucket is empty - no manifest files found"
-              exit 0
-          }
-
-          foreach ($file in $files) {
-              $name = $file.Name
-              Write-Host "检查: $name" -NoNewline
-
-              try {
-                  $json = Get-Content $file.FullName -Raw | ConvertFrom-Json
-              } catch {
-                  Write-Host " ::error::JSON 解析失败: $($_.Exception.Message)" -ForegroundColor Red
-                  $hasError = $true
-                  continue
-              }
-
-              # 必填顶层字段
-              $required = @('version', 'description', 'homepage', 'architecture')
-              $missing = $required | Where-Object { -not $json.PSObject.Properties.Name -contains $_ }
-              if ($missing) {
-                  Write-Host " ::error::缺少必填字段: $($missing -join ', ')" -ForegroundColor Red
-                  $hasError = $true
-                  continue
-              }
-
-              # version 不为空
-              if ([string]::IsNullOrWhiteSpace($json.version) -or $json.version -eq '0') {
-                  Write-Host " ::error::version 无效: '$($json.version)'" -ForegroundColor Red
-                  $hasError = $true
-                  continue
-              }
-
-              # description 不为空
-              if ([string]::IsNullOrWhiteSpace($json.description)) {
-                  Write-Host " ::error::description 为空" -ForegroundColor Red
-                  $hasError = $true
-                  continue
-              }
-
-              # homepage 基本 URL 格式检查
-              if ($json.homepage -notmatch '^https?://') {
-                  Write-Host " ::warning::homepage 非 http(s) 开头: $($json.homepage)" -ForegroundColor Yellow
-              }
-
-               # license 检查（非必填但建议补充）
-               if (-not $json.license) {
-                   Write-Host " ::warning::$name 缺少 license" -ForegroundColor Yellow
-               }
-
-               # checkver 检查（有 autoupdate 时必填）
-               if ($json.autoupdate -and -not $json.checkver) {
-                   Write-Host " ::error::$name 有 autoupdate 但缺少 checkver" -ForegroundColor Red
-                   $hasError = $true
-               }
-
-               # 检查 architecture 下每个条目
-              $archError = $false
-              foreach ($arch in $json.architecture.PSObject.Properties) {
-                  $archName = $arch.Name
-                   $cfg = $arch.Value
-
-                   # 架构名必须为 Scoop 合法标识
-                   $validArchNames = @('64bit', '32bit', 'arm64')
-                   if ($archName -notin $validArchNames) {
-                       Write-Host " ::error::$archName 非法（应为 64bit / 32bit / arm64）" -ForegroundColor Red
-                       $archError = $true
-                       continue
-                   }
-
-                   if (-not $cfg.url) {
-                      Write-Host " ::error::$archName 缺少 url" -ForegroundColor Red
-                       $archError = $true
-                       continue
-                   }
-
-                   # 下载 URL 必须为 https
-                   if ($cfg.url -notmatch '^https://') {
-                       Write-Host " ::error::$archName url 必须以 https:// 开头" -ForegroundColor Red
-                       $archError = $true
-                       continue
-                   }
-
-                   # hash 格式检查: 必须为十六进制字符串 (SHA1/SHA256/SHA512)
-                   if ($cfg.PSObject.Properties.Name -contains 'hash' -and $cfg.hash) {
-                       if ($cfg.hash -is [string] -and $cfg.hash -ne '0' -and $cfg.hash -notmatch '^[a-fA-F0-9]{40,128}$') {
-                           Write-Host " ::error::$archName hash 格式非法: 应为十六进制字符串" -ForegroundColor Red
-                           $archError = $true
-                       }
-                   }
-              }
-              if ($archError) {
-                  $hasError = $true
-                  continue
-              }
-
-              # autoupdate 约定检查
-              if ($json.autoupdate -and $json.autoupdate.hash -and $json.autoupdate.hash.mode) {
-                  $mode = $json.autoupdate.hash.mode
-                  if ($mode -notin @('github', 'download')) {
-                      Write-Host " ::warning::hash mode 非常规值: $mode" -ForegroundColor Yellow
-                  }
-              } elseif ($null -ne $json.autoupdate) {
-                  # 有 autoupdate 但没有 hash.mode，提醒
-                  if (-not $json.autoupdate.hash -or -not $json.autoupdate.hash.mode) {
-                      Write-Host " ::warning::$name 有 autoupdate 但未配置 hash.mode" -ForegroundColor Yellow
-                  }
-              }
-
-              Write-Host " ✓ $($json.version)" -ForegroundColor Green
-          }
-
-          if ($hasError) {
-              Write-Host "::error::存在验证失败的清单" -ForegroundColor Red
-              exit 1
-          }
-          Write-Host "::notice::所有清单验证通过" -ForegroundColor Green
+        run: pwsh bin/lint.ps1 -CI
