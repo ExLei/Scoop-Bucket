@@ -20,17 +20,24 @@
         "ensure \"$persist_dir\\data\" | Out-Null",
         "$junction = \"$env:APPDATA\\manyougz\\Velotype\"",
         "if (Test-Path -LiteralPath $junction) {",
-        "    if (!(Get-Item -LiteralPath $junction).LinkType) {",
+        "    if ((Get-Item -LiteralPath $junction).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    } else {",
         "        # 真实目录 → 迁移已有数据到 persist 目录后替换为 junction",
         "        Write-Host \"迁移 Velotype 配置数据到 persist 目录...\"",
         "        Copy-Item -LiteralPath $junction\\* -Destination \"$persist_dir\\data\" -Recurse -Force",
         "        Remove-Item -LiteralPath $junction -Force -Recurse",
-        "        New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null",
         "    }",
-        "} else {",
-        "    New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null",
-        "}"
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
     ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name velotype -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "bin": "velotype.exe",
     "shortcuts": [
         ["velotype.exe", "..\\Velotype"]
@@ -39,7 +46,7 @@
     "post_uninstall": [
         "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
         "$junction = \"$env:APPDATA\\manyougz\\Velotype\"",
-        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).LinkType -eq 'Junction')) {",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
         "    [System.IO.Directory]::Delete($junction)",
         "}"
     ],

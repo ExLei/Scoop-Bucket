@@ -20,28 +20,36 @@
     },
     "pre_install": [
         "# 确保数据目录存在（persist 恢复后应已存在，保底创建）",
-        "if (!(Test-Path \"$dir\\data\")) { New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null }",
-        "",
-        "# 迁移 %APPDATA% 中已有数据（首次安装时，从非 Scoop 旧版迁移）",
-        "if (Test-Path \"$env:APPDATA\\Bili23 Downloader\") {",
-        "    $item = Get-Item \"$env:APPDATA\\Bili23 Downloader\"",
-        "    if (-not $item.LinkType) {",
-        "        Write-Host \"迁移 %APPDATA%\\Bili23 Downloader 已有数据到 persist 目录...\"",
-        "        Get-ChildItem \"$env:APPDATA\\Bili23 Downloader\" | Move-Item -Destination \"$dir\\data\" -Force",
-        "        Remove-Item \"$env:APPDATA\\Bili23 Downloader\" -Recurse -Force",
-        "    }",
+        "if (!(Test-Path \"$dir\\data\")) {",
+        "    New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
         "}",
         "",
-        "# 创建/更新 junction：%APPDATA% → persist 目录",
-        "New-Item -ItemType Junction -Path \"$env:APPDATA\\Bili23 Downloader\" -Target \"$dir\\data\" -Force | Out-Null"
+        "# 将 %APPDATA%\\Bili23 Downloader 映射到 persist 目录",
+        "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
+        "if (Test-Path $junction) {",
+        "    $item = Get-Item $junction",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    } else {",
+        "        Write-Host \"迁移 %APPDATA%\\Bili23 Downloader 已有数据到 persist 目录...\"",
+        "        Get-ChildItem $junction | Move-Item -Destination \"$persist_dir\\data\" -Force",
+        "        Remove-Item $junction -Force -Recurse",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}"
     ],
     "uninstaller": {
         "script": [
-            "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
-            "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
-            "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).LinkType -eq 'Junction')) {",
-            "    [System.IO.Directory]::Delete($junction)",
-            "}"
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name Bili23 -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
         ]
     },
     "bin": "Bili23.exe",

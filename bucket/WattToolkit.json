@@ -9,8 +9,15 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/BeyondDimension/SteamTools/releases/download/3.1.0/Steam++_v3.1.0_win_x64.7z",
-            "hash": "74D0EB1FD67E8EB0914A9962244FC4251993061DF77E6E6C0DFE8A4A899D5AE4"
+            "hash": "74d0eb1fd67e8eb0914a9962244fc4251993061df77e6e6c0dfe8a4a899d5ae4"
         }
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name Steam++ -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
     },
     "bin": "Steam++.exe",
     "shortcuts": [

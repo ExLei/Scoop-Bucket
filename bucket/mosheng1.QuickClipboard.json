@@ -11,6 +11,13 @@
             "hash": "1d7135681fb63f3b313015df623bae7ba7dd7174ec9833fca7cf9f09101a4419"
         }
     },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name QuickClipboard_portable -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "shortcuts": [
         ["QuickClipboard_portable.exe", "..\\QuickClipboard"]
     ],

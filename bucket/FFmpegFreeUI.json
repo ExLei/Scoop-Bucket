@@ -22,6 +22,13 @@
         "if (!(Test-Path \"$dir\\Presets\")) { New-Item -ItemType Directory \"$dir\\Presets\" -Force | Out-Null }",
         "if (!(Test-Path \"$dir\\Plugin\")) { New-Item -ItemType Directory \"$dir\\Plugin\" -Force | Out-Null }"
     ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name FFmpegFreeUI -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "shortcuts": [
         ["FFmpegFreeUI.exe", "..\\FFmpegFreeUI"]
     ],

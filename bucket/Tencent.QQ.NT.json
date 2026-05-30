@@ -16,12 +16,26 @@
     "pre_install": [
         "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
         "$persistDir = \"$persist_dir\\QQ_Data\"",
-        "if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force }",
+        "# 确保 persist 数据目录存在",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
         "if (Test-Path $dataDir) {",
         "    Get-ChildItem $dataDir -Directory | ForEach-Object {",
+        "        $source = $_.FullName",
         "        $target = Join-Path $persistDir $_.Name",
-        "        if (!(Test-Path $target)) { Move-Item $_.FullName $target }",
-        "        New-Item -ItemType Junction -Path $_.FullName -Target $target -Force",
+        "        if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            # 删旧 junction（安全：不删目标数据）",
+        "            [System.IO.Directory]::Delete($source)",
+        "        } elseif (Test-Path $target) {",
+        "            # 真实目录 + persist 已有数据 → 合并后删源",
+        "            Copy-Item \"$source\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+        "            Remove-Item $source -Recurse -Force",
+        "        } else {",
+        "            # 首次迁移",
+        "            Move-Item $source $target",
+        "        }",
+        "        New-Item -ItemType Junction -Path $source -Target $target | Out-Null",
         "    }",
         "}"
     ],
@@ -30,7 +44,7 @@
         "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
         "if (Test-Path $dataDir) {",
         "    Get-ChildItem $dataDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
-        "        if ((Get-Item $_.FullName -Force -ErrorAction SilentlyContinue).LinkType -eq 'Junction') {",
+        "        if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
         "            [System.IO.Directory]::Delete($_.FullName)",
         "        }",
         "    }",
@@ -38,8 +52,18 @@
     ],
     "post_install": [
         "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
-        "if (!(Test-Path $dataDir)) { New-Item -ItemType Directory $dataDir -Force }"
+        "# 确保 QQ 数据父目录存在（子目录由 QQ 运行时创建）",
+        "if (!(Test-Path $dataDir)) {",
+        "    New-Item -ItemType Directory $dataDir -Force | Out-Null",
+        "}"
     ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name QQ -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "shortcuts": [
         [
             "QQ.exe",

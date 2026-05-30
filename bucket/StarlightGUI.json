@@ -14,15 +14,21 @@
     },
     "pre_install": [
         "# 创建空配置文件占位，确保 persist 将其视为文件而非文件夹",
-        "if (!(Test-Path \"$dir\\StarlightGUI.json\")) { New-Item -ItemType File \"$dir\\StarlightGUI.json\" -Force | Out-Null }"
+        "if (!(Test-Path \"$dir\\StarlightGUI.json\")) { Set-Content -Path \"$dir\\StarlightGUI.json\" -Value '{}' -Encoding ASCII -Force }"
     ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name StarlightGUI -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "shortcuts": [
         ["StarlightGUI.exe", "..\\Starlight GUI"]
     ],
     "persist": "StarlightGUI.json",
     "checkver": {
-        "url": "https://api.github.com/repos/OpenStarlight/StarlightGUI/releases?per_page=5",
-        "regex": "tag_name\": \"v(3\\.[\\d.]+(?:-pre\\d+)?)\""
+        "github": "https://github.com/OpenStarlight/StarlightGUI"
     },
     "autoupdate": {
         "architecture": {

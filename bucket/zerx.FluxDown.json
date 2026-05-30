@@ -16,6 +16,13 @@
         "# 创建空数据库文件占位，确保 persist 将其视为文件而非文件夹",
         "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }"
     ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name flux_down -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "shortcuts": [
         ["flux_down.exe", "..\\FluxDown"]
     ],
