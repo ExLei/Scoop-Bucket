@@ -45,7 +45,23 @@ temp/
 *.log
 .agents/skills/
 
-AGENTS.md
+# Secrets & Credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+id_rsa*
+id_ed25519*
+id_ecdsa*
+*.secret
+*.credentials
+.npmrc
+.pypirc
+.netrc
+nuget.config
 
 # Extras contribution staging (git-ignored, not for this bucket)
 contrib-extras/
