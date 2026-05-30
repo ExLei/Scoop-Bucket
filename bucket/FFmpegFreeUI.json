@@ -9,13 +9,22 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/5.2/FFmpegFreeUI.SingleFile.x64.7z",
-            "hash": "a12fe6b940f1cb618d1fbdccb407db65b0f98abeecda752e58598c4dbb5b607d"
+            "hash": "a12fe6b940f1cb618d1fbdccb407db65b0f98abeecda752e58598c4dbb5b607d",
+            "extract_dir": "FFmpegFreeUI SingleFile x64"
         }
     },
+    "pre_install": [
+        "# 为 Settings.json 创建空文件占位，防止 Scoop 将 persist 链接创建为文件夹",
+        "if (!(Test-Path \"$dir\\Settings.json\")) { New-Item -ItemType File \"$dir\\Settings.json\" -Force | Out-Null }",
+        "# 确保 Presets 和 Plugin 是目录",
+        "if (!(Test-Path \"$dir\\Presets\")) { New-Item -ItemType Directory \"$dir\\Presets\" -Force | Out-Null }",
+        "if (!(Test-Path \"$dir\\Plugin\")) { New-Item -ItemType Directory \"$dir\\Plugin\" -Force | Out-Null }"
+    ],
     "shortcuts": [
         ["FFmpegFreeUI.exe", "..\\FFmpegFreeUI"]
     ],
     "persist": [
+        "Settings.json",
         "Presets",
         "Plugin"
     ],
@@ -25,7 +34,8 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.SingleFile.x64.7z"
+                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.SingleFile.x64.7z",
+                "extract_dir": "FFmpegFreeUI SingleFile x64"
             }
         },
         "hash": {
