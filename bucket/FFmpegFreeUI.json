@@ -1,0 +1,36 @@
+{
+    "version": "5.2",
+    "description": "FFmpegFreeUI (3FUI) - FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | A lightweight professional GUI shell for FFmpeg on Windows",
+    "homepage": "https://3fui.top",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/Lake1059/FFmpegFreeUI/blob/main/LICENSE"
+    },
+    "depends": "extras/dotnet-desktopruntime",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/5.2/FFmpegFreeUI.SingleFile.x64.7z",
+            "hash": "a12fe6b940f1cb618d1fbdccb407db65b0f98abeecda752e58598c4dbb5b607d"
+        }
+    },
+    "shortcuts": [
+        ["FFmpegFreeUI.exe", "..\\FFmpegFreeUI"]
+    ],
+    "persist": [
+        "Presets",
+        "Plugin"
+    ],
+    "checkver": {
+        "github": "https://github.com/Lake1059/FFmpegFreeUI"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.SingleFile.x64.7z"
+            }
+        },
+        "hash": {
+            "mode": "github"
+        }
+    }
+}

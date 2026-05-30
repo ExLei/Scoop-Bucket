@@ -25,6 +25,17 @@
         "    }",
         "}"
     ],
+    "pre_uninstall": [
+        "# 清理 %PUBLIC%\\Documents\\Tencent\\QQ 下的目录联接，避免残留",
+        "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+        "if (Test-Path $dataDir) {",
+        "    Get-ChildItem $dataDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
+        "        if ((Get-Item $_.FullName -Force -ErrorAction SilentlyContinue).LinkType -eq 'Junction') {",
+        "            [System.IO.Directory]::Delete($_.FullName)",
+        "        }",
+        "    }",
+        "}"
+    ],
     "post_install": [
         "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
         "if (!(Test-Path $dataDir)) { New-Item -ItemType Directory $dataDir -Force }"

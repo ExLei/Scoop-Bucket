@@ -16,9 +16,32 @@
             "hash": "2ea2cc3cc41ab2b0de9eb92ba42c477737426bca52aead504a27230220fff90d"
         }
     },
+    "pre_install": [
+        "ensure \"$persist_dir\\data\" | Out-Null",
+        "$junction = \"$env:APPDATA\\manyougz\\Velotype\"",
+        "if (Test-Path -LiteralPath $junction) {",
+        "    if (!(Get-Item -LiteralPath $junction).LinkType) {",
+        "        # 真实目录 → 迁移已有数据到 persist 目录后替换为 junction",
+        "        Write-Host \"迁移 Velotype 配置数据到 persist 目录...\"",
+        "        Copy-Item -LiteralPath $junction\\* -Destination \"$persist_dir\\data\" -Recurse -Force",
+        "        Remove-Item -LiteralPath $junction -Force -Recurse",
+        "        New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null",
+        "    }",
+        "} else {",
+        "    New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null",
+        "}"
+    ],
     "bin": "velotype.exe",
     "shortcuts": [
         ["velotype.exe", "..\\Velotype"]
+    ],
+    "persist": "data",
+    "post_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$junction = \"$env:APPDATA\\manyougz\\Velotype\"",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).LinkType -eq 'Junction')) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/manyougz/velotype"
