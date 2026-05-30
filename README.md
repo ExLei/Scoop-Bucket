@@ -26,6 +26,8 @@ scoop install exlei/{软件包ID}
 | ZedG | 1.4.4 | Zed Editor（汉化版），基于 Rust 的高性能代码编辑器本地化版本 | `persist\appdata`, `persist\local` |
 | Starlight GUI | 3.0.0-pre3 | 基于 C++/WinRT WinUI3 的 Windows 内核级工具箱，集成任务管理、文件管理、系统监控等功能 | `persist\StarlightGUI.json` |
 | FFmpegFreeUI | 5.2 | FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | `persist\Presets`, `persist\Plugin` |
+| Game Cheats Manager | 2.4.6 | 游戏修改器管理工具，集成多来源修改器搜索、下载、自动更新等功能 | `persist\data` |
+| Game Save Manager | 2.1.0 | 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | `persist\data` |
 
 ## 自动更新
 
