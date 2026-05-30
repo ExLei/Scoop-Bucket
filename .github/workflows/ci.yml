@@ -67,22 +67,51 @@ jobs:
                   Write-Host " ::warning::homepage 非 http(s) 开头: $($json.homepage)" -ForegroundColor Yellow
               }
 
-              # 检查 architecture 下每个条目
+               # license 检查（非必填但建议补充）
+               if (-not $json.license) {
+                   Write-Host " ::warning::$name 缺少 license" -ForegroundColor Yellow
+               }
+
+               # checkver 检查（有 autoupdate 时必填）
+               if ($json.autoupdate -and -not $json.checkver) {
+                   Write-Host " ::error::$name 有 autoupdate 但缺少 checkver" -ForegroundColor Red
+                   $hasError = $true
+               }
+
+               # 检查 architecture 下每个条目
               $archError = $false
               foreach ($arch in $json.architecture.PSObject.Properties) {
                   $archName = $arch.Name
-                  $cfg = $arch.Value
+                   $cfg = $arch.Value
 
-                  if (-not $cfg.url) {
+                   # 架构名必须为 Scoop 合法标识
+                   $validArchNames = @('64bit', '32bit', 'arm64')
+                   if ($archName -notin $validArchNames) {
+                       Write-Host " ::error::$archName 非法（应为 64bit / 32bit / arm64）" -ForegroundColor Red
+                       $archError = $true
+                       continue
+                   }
+
+                   if (-not $cfg.url) {
                       Write-Host " ::error::$archName 缺少 url" -ForegroundColor Red
-                      $archError = $true
-                      continue
-                  }
+                       $archError = $true
+                       continue
+                   }
 
-                  # hash 检查: 如果存在 hash 但不等于 0 且不是 mode 模式
-                  if ($cfg.PSObject.Properties.Name -contains 'hash' -and $cfg.hash -and $cfg.hash -ne '0') {
-                      # hash 可以是字符串或对象(autoupdate mode)，都合法
-                  }
+                   # 下载 URL 必须为 https
+                   if ($cfg.url -notmatch '^https://') {
+                       Write-Host " ::error::$archName url 必须以 https:// 开头" -ForegroundColor Red
+                       $archError = $true
+                       continue
+                   }
+
+                   # hash 格式检查: 必须为十六进制字符串 (SHA1/SHA256/SHA512)
+                   if ($cfg.PSObject.Properties.Name -contains 'hash' -and $cfg.hash) {
+                       if ($cfg.hash -is [string] -and $cfg.hash -ne '0' -and $cfg.hash -notmatch '^[a-fA-F0-9]{40,128}$') {
+                           Write-Host " ::error::$archName hash 格式非法: 应为十六进制字符串" -ForegroundColor Red
+                           $archError = $true
+                       }
+                   }
               }
               if ($archError) {
                   $hasError = $true

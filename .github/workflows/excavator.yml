@@ -3,7 +3,11 @@ name: Excavator
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2,14 * * *'
+    - cron: '0 0,6,12,18 * * *'
+
+concurrency:
+  group: excavator
+  cancel-in-progress: false
 
 permissions:
   contents: write
