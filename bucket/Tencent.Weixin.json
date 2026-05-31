@@ -79,7 +79,16 @@
         "script": [
             "# 结束微信进程（终止后等待文件句柄释放）",
             "Stop-Process -Name Weixin -Force -ErrorAction SilentlyContinue",
-            "Start-Sleep -Milliseconds 1500"
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\微信.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
         ]
     },
     "pre_uninstall": [
@@ -104,24 +113,20 @@
     ],
     "checkver": {
         "script": [
-            "# 使用微软 Winget 查询微信最新版本（仅捕获 stdout，过滤 stderr 进度条）",
             "$stdout = & { winget show --exact --id Tencent.WeChat.Universal --source winget --accept-source-agreements } 2>&1 | Where-Object { $_ -is [string] } | Out-String",
-            "if ($stdout -match 'Version:\\s*([\\d.]+)') {",
-            "    Write-Output $matches[1]",
-            "} else {",
-            "    Write-Error \"未能从 Winget 获取版本: $stdout\"",
-            "}"
+            "if ($stdout -match 'Version:\\s*([\\d.]+)') { $ver = $matches[1] }",
+            "if ($stdout -match 'Installer Url:\\s*(\\S+)') { $url = $matches[1] }",
+            "if ($stdout -match 'Installer SHA256:\\s*([A-Fa-f0-9]+)') { $sha = $matches[1].ToLower() }",
+            "Write-Output \"ver:$ver;x64:$url;sha256:$sha\""
         ],
-        "regex": "([\\d.]+)"
+        "regex": "ver:(?<version>[^;]+);x64:(?<x64>[^;]+);sha256:(?<sha256>[^;]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dldir1v6.qq.com/weixin/Universal/Windows/WeChatWin_$matchHead.exe#/dl.7z"
+                "url": "$matchX64#/dl.7z",
+                "hash": "$matchSha256"
             }
-        },
-        "hash": {
-            "mode": "download"
         }
     }
 }

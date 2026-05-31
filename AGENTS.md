@@ -35,7 +35,7 @@
 - **GUI 应用必须终结进程** —— 有 shortcuts 须 Stop-Process
 - **进程终止规范** —— 须 -Force -EA SilentlyContinue，-Name 禁 .exe
 - **uninstaller.script 优先** —— 进程终止须在 uninstaller.script
-- **快捷方式显式清理** —— 须在 `uninstaller.script` 中清理用户与全局开始菜单残留 因为**快捷方式:** 名以 `..\\` 开头
+- **快捷方式显式清理** —— 须在 `uninstaller.script` 中清理用户与全局开始菜单残留 因为**快捷方式:** 名以 `..\\` 开头，须校验目标
 - **卸载程序存在性检查** —— 调用应用自带的卸载程序（如 `Uninstall.exe`）前，必须用 `Test-Path` 检查文件是否存在，避免脚本因文件缺失中断：
   ```powershell
   if (Test-Path "$dir\\Uninstall.exe") {
