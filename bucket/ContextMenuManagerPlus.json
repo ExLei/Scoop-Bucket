@@ -48,8 +48,8 @@
         "此版本为 framework-dependent 便携版，需要 .NET Runtime 10.0 或更高版本：",
         "  https://dotnet.microsoft.com/download/dotnet/10.0",
         "",
-        "数据存储在以下位置（删除应用时会保留）：",
-        "  %LocalAppData%\\ContextMenuMgr\\",
-        "  %ProgramData%\\ContextMenuMgr\\"
+        "数据存储在应用目录外，Scoop 更新/卸载不会删除：",
+        "  %ProgramData%\\ContextMenuMgr\\（当前版本，含设置/状态/日志）",
+        "  %LocalAppData%\\ContextMenuMgr\\（旧版遗留，新版自动迁移）"
     ]
 }

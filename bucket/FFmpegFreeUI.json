@@ -18,8 +18,8 @@
         "if (!(Test-Path \"$dir\\Settings.json\")) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
         "# 修复已存在的空 Settings.json（首次安装时创建的空文件导致 JSON 解析失败）",
         "if ((Get-Item \"$dir\\Settings.json\" -ErrorAction SilentlyContinue).Length -eq 0) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
-        "# 确保 Presets 和 Plugin 是目录",
-        "if (!(Test-Path \"$dir\\Presets\")) { New-Item -ItemType Directory \"$dir\\Presets\" -Force | Out-Null }",
+        "# 确保 Preset 和 Plugin 是目录",
+        "if (!(Test-Path \"$dir\\Preset\")) { New-Item -ItemType Directory \"$dir\\Preset\" -Force | Out-Null }",
         "if (!(Test-Path \"$dir\\Plugin\")) { New-Item -ItemType Directory \"$dir\\Plugin\" -Force | Out-Null }"
     ],
     "uninstaller": {
@@ -43,7 +43,7 @@
     ],
     "persist": [
         "Settings.json",
-        "Presets",
+        "Preset",
         "Plugin"
     ],
     "checkver": {
