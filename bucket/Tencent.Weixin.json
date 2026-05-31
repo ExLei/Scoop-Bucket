@@ -8,7 +8,7 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1v6.qq.com/weixin/Universal/Windows/WeChatWin_4.1.10.exe#/dl.7z",
+            "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v4.1.10.27/weixin_4.1.10.27.exe#/dl.7z",
             "hash": "54203fc2b41983fa106b0af0d67f86befc56ccd3dc1005d4bab6de8ea36b4f74"
         }
     },
@@ -23,6 +23,8 @@
         "if ($verDir) {",
         "    Move-Item \"$verDir\\Weixin.exe\" \"$dir\" -Force -ErrorAction SilentlyContinue",
         "    Move-Item \"$verDir\\Uninstall.exe\" \"$dir\" -Force -ErrorAction SilentlyContinue",
+        "    if (!(Test-Path \"$dir\\Weixin.exe\")) { throw \"Weixin.exe not found after extraction\" }",
+        "    if (!(Test-Path \"$dir\\Uninstall.exe\")) { throw \"Uninstall.exe not found after extraction\" }",
         "}",
         "# 删除安装器辅助文件",
         "Remove-Item \"$dir\\FindProcDLL.dll\", \"$dir\\nsis7z.dll\", \"$dir\\System.dll\", \"$dir\\WeChatInstallDll.dll\" -Force -ErrorAction SilentlyContinue",
@@ -152,20 +154,15 @@
         "weixin:// 协议链接已在安装/更新时自动注册，无需额外操作"
     ],
     "checkver": {
-        "script": [
-            "$stdout = & { winget show --exact --id Tencent.WeChat.Universal --source winget --accept-source-agreements } 2>&1 | Where-Object { $_ -is [string] } | Out-String",
-            "if ($stdout -match 'Version:\\s*([\\d.]+)') { $ver = $matches[1] }",
-            "if ($stdout -match 'Installer Url:\\s*(\\S+)') { $url = $matches[1] }",
-            "if ($stdout -match 'Installer SHA256:\\s*([A-Fa-f0-9]+)') { $sha = $matches[1].ToLower() }",
-            "Write-Output \"ver:$ver;x64:$url;sha256:$sha\""
-        ],
-        "regex": "ver:(?<version>[^;]+);x64:(?<x64>[^;]+);sha256:(?<sha256>[^;]+)"
+        "github": "https://github.com/cscnk52/wechat-windows-versions"
     },
     "autoupdate": {
+        "hash": {
+            "mode": "github"
+        },
         "architecture": {
             "64bit": {
-                "url": "$matchX64#/dl.7z",
-                "hash": "$matchSha256"
+                "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v$version/weixin_$version.exe#/dl.7z"
             }
         }
     }
