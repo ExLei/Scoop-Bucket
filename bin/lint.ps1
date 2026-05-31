@@ -1,4 +1,4 @@
-#Requires -Version 7.0
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Scoop Bucket 清单验证脚本 —— 检查 bucket/*.json 是否符合 Scoop Schema 与 AGENTS.md 约定
@@ -200,7 +200,7 @@ foreach ($file in $files) {
 
     # ── JSON 语法解析 ──
     try {
-        $json = Get-Content $file.FullName -Raw | ConvertFrom-Json
+        $json = Get-Content $file.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
     } catch {
         Write-Result -Level error -File $file.FullName -Message "JSON 解析失败: $($_.Exception.Message)"
         if (-not $CI) { Write-Host '' }
@@ -372,16 +372,12 @@ foreach ($file in $files) {
     }
 
     # ── GitHub Releases 哈希 ──
-    # 约定（AGENTS.md）：拥有 GitHub 发行版的软件包，autoupdate 中必须使用 hash.mode=github
+    # 适配官方 Scoop schema：hash.mode 不含 "github" 枚举值
+    # GitHub 源的 hash 由 Scoop autoupdate 自动从 release 获取，无需显式声明
     if ($json.checkver -and $json.checkver.PSObject.Properties.Name -contains 'github') {
-        if ($json.autoupdate) {
-            if ($json.autoupdate.PSObject.Properties.Name -contains 'hash' -and
-                $json.autoupdate.hash.PSObject.Properties.Name -contains 'mode') {
-                if ($json.autoupdate.hash.mode -ne 'github') {
-                    Write-Result -Level error -File $file.FullName -Message "checkver.github 存在但 autoupdate.hash.mode 为 '$($json.autoupdate.hash.mode)'，应为 'github'"
-                }
-            } else {
-                Write-Result -Level warning -File $file.FullName -Message "checkver.github 存在但 autoupdate 未配置 hash.mode，应为 'github'"
+        if ($json.autoupdate -and $json.autoupdate.PSObject.Properties.Name -contains 'hash') {
+            if ($json.autoupdate.hash.mode -eq 'github') {
+                Write-Result -Level warning -File $file.FullName -Message "autoupdate.hash.mode 为 'github'，官方 Scoop schema 不支持此枚举值，建议移除 hash 块（Scoop 自动从 GitHub release 获取 hash）"
             }
         }
     }
@@ -464,9 +460,10 @@ foreach ($file in $files) {
     # ── autoupdate hash.mode 合法值 ──
     # Schema: hash.mode enum ["download","extract","json","xpath","rdf","metalink","fosshub","sourceforge"]
     # 原因：Scoop 仅支持这些 hash 获取模式，其他值通常是拼写错误
+    # 注："github" 虽然功能上可用，但官方 schema 不收录，建议移除 hash 块让 Scoop 自动检测
     # 检查方式：hash.mode 不在 Schema 枚举列表中 → 警告
     # 误报风险：极低。Schema 枚举值是固定的
-    $validHashModes = @('download', 'extract', 'json', 'xpath', 'rdf', 'metalink', 'fosshub', 'sourceforge', 'github')
+    $validHashModes = @('download', 'extract', 'json', 'xpath', 'rdf', 'metalink', 'fosshub', 'sourceforge')
     if ($json.autoupdate -and $json.autoupdate.hash -and $json.autoupdate.hash.mode) {
         if ($json.autoupdate.hash.mode -notin $validHashModes) {
             Write-Result -Level warning -File $file.FullName -Message "autoupdate.hash.mode 非常规值: $($json.autoupdate.hash.mode)（期望 $($validHashModes -join '/')）"
