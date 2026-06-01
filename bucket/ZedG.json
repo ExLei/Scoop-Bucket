@@ -1,0 +1,96 @@
+{
+    "version": "1.4.4",
+    "description": "Zed Editor (Localized / 汉化版) - 基于 Rust 的高性能代码编辑器汉化版本 | A localized Chinese version of the Zed code editor",
+    "homepage": "https://github.com/x6nux/zed-globalization",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/x6nux/zed-globalization/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/x6nux/zed-globalization/releases/download/v1.4.4/zedg-zh-cn-windows-x86_64-v1.4.4.zip",
+            "hash": "b1707a0d8c6087900ecedba1d4314de7641e786a8de6a1301768990ecb156487"
+        },
+        "arm64": {
+            "url": "https://github.com/x6nux/zed-globalization/releases/download/v1.4.4/zedg-zh-cn-windows-aarch64-v1.4.4.zip",
+            "hash": "b4a6fac12faaa2ca188ccf3fc18bc68df93623993af0e292ff917c42cbaf2055"
+        }
+    },
+    "post_install": [
+        "# 将系统数据目录映射到 persist（AppData + LocalAppData）",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\appdata\", \"$env:APPDATA\\Zed\"),",
+        "    @(\"$persist_dir\\local\", \"$env:LOCALAPPDATA\\Zed\")",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    # 确保 persist 目录存在（必须在迁移前创建，Move-Item 需要目标目录存在）",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($targetDir)",
+        "        } else {",
+        "            Get-ChildItem $targetDir | Move-Item -Destination $persistDir -Force",
+        "            Remove-Item $targetDir -Force -Recurse -ErrorAction SilentlyContinue",
+        "        }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "@(\"$env:APPDATA\\Zed\", \"$env:LOCALAPPDATA\\Zed\") | ForEach-Object {",
+        "    if ((Test-Path $_) -and ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "        [System.IO.Directory]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name ZedG -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\ZedG.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "bin": [
+        [
+            "bin\\ZedG.exe",
+            "zedg"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ZedG.exe",
+            "..\\ZedG"
+        ]
+    ],
+    "notes": [
+        "ZedG 配置/扩展/主题等数据已持久化：",
+        "  - 设置/键映射/主题 → persist\\appdata（映射 %APPDATA%\\Zed）",
+        "  - 数据库/扩展索引/语言服务器 → persist\\local（映射 %LOCALAPPDATA%\\Zed）",
+        "更新或重装时数据不会丢失。"
+    ],
+    "checkver": {
+        "github": "https://github.com/x6nux/zed-globalization"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/x6nux/zed-globalization/releases/download/v$version/zedg-zh-cn-windows-x86_64-v$version.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/x6nux/zed-globalization/releases/download/v$version/zedg-zh-cn-windows-aarch64-v$version.zip"
+            }
+        }
+    }
+}

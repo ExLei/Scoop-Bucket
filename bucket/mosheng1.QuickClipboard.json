@@ -1,0 +1,44 @@
+{
+    "version": "0.3.2",
+    "description": "一个功能强大的剪贴板管理工具 (便携版) | A powerful clipboard management tool (Portable)",
+    "homepage": "https://quickclipboard.cn/",
+    "license": {
+        "identifier": "Apache-2.0"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v0.3.2/QuickClipboard_0.3.2_portable.exe#/QuickClipboard_portable.exe",
+            "hash": "1d7135681fb63f3b313015df623bae7ba7dd7174ec9833fca7cf9f09101a4419"
+        }
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name QuickClipboard_portable -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\QuickClipboard.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        ["QuickClipboard_portable.exe", "..\\QuickClipboard"]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/mosheng1/QuickClipboard"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v$version/QuickClipboard_$version_portable.exe#/QuickClipboard_portable.exe"
+            }
+        }
+    }
+}
