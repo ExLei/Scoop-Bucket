@@ -1,0 +1,60 @@
+{
+    "version": "5.2",
+    "description": "FFmpegFreeUI (3FUI) - FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | A lightweight professional GUI shell for FFmpeg on Windows",
+    "homepage": "https://3fui.top",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/Lake1059/FFmpegFreeUI/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/5.2/FFmpegFreeUI.SingleFile.x64.7z",
+            "hash": "a12fe6b940f1cb618d1fbdccb407db65b0f98abeecda752e58598c4dbb5b607d",
+            "extract_dir": "FFmpegFreeUI SingleFile x64"
+        }
+    },
+    "pre_install": [
+        "# 为 Settings.json 创建 JSON 对象占位，防止 Scoop 将 persist 链接创建为文件夹",
+        "if (!(Test-Path \"$dir\\Settings.json\")) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
+        "# 修复已存在的空 Settings.json（首次安装时创建的空文件导致 JSON 解析失败）",
+        "if ((Get-Item \"$dir\\Settings.json\" -ErrorAction SilentlyContinue).Length -eq 0) { Set-Content \"$dir\\Settings.json\" '{}' -Encoding ASCII }",
+        "# 确保 Preset 和 Plugin 是目录",
+        "if (!(Test-Path \"$dir\\Preset\")) { New-Item -ItemType Directory \"$dir\\Preset\" -Force | Out-Null }",
+        "if (!(Test-Path \"$dir\\Plugin\")) { New-Item -ItemType Directory \"$dir\\Plugin\" -Force | Out-Null }"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name FFmpegFreeUI -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\FFmpegFreeUI.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        ["FFmpegFreeUI.exe", "..\\FFmpegFreeUI"]
+    ],
+    "persist": [
+        "Settings.json",
+        "Preset",
+        "Plugin"
+    ],
+    "checkver": {
+        "github": "https://github.com/Lake1059/FFmpegFreeUI"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.SingleFile.x64.7z",
+                "extract_dir": "FFmpegFreeUI SingleFile x64"
+            }
+        }
+    }
+}

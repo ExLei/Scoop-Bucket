@@ -1,0 +1,80 @@
+{
+    "version": "2.00.6",
+    "description": "Bili23-Downloader - 开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类等功能 | Open Source, Free, Cross-Platform Bilibili Video Downloader",
+    "homepage": "https://bili23.scott-sloan.cn/",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/ScottSloan/Bili23-Downloader/blob/main/LICENSE"
+    },
+    "notes": [
+        "数据持久化: 应用配置/config.json、任务列表/task.db、缩略图缓存/thumbnail.db 等数据",
+        "已通过目录链接 (junction) 重定向到 Scoop persist 目录。",
+        "卸载时不会残留数据，重新安装自动恢复。"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ScottSloan/Bili23-Downloader/releases/download/v2.00.6/Bili23-Downloader_2.00.6_windows_x64_portable.zip",
+            "hash": "6dc69f3c6f3b49428c2a5c6e9c7dc4697ad9e5a1f2bbda23da393ce7f0587353",
+            "extract_dir": "Bili23-Downloader"
+        }
+    },
+    "pre_install": [
+        "# 确保数据目录存在（persist 恢复后应已存在，保底创建）",
+        "if (!(Test-Path \"$dir\\data\")) {",
+        "    New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
+        "}",
+        "",
+        "# 将 %APPDATA%\\Bili23 Downloader 映射到 persist 目录",
+        "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
+        "if (Test-Path $junction) {",
+        "    $item = Get-Item $junction -Force -ErrorAction SilentlyContinue",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    } else {",
+        "        Write-Host \"迁移 %APPDATA%\\Bili23 Downloader 已有数据到 persist 目录...\"",
+        "        Get-ChildItem $junction | Move-Item -Destination \"$persist_dir\\data\" -Force",
+        "        Remove-Item $junction -Force -Recurse",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name Bili23 -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Bili23 下载器.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "bin": "Bili23.exe",
+    "shortcuts": [
+        ["Bili23.exe", "..\\Bili23 下载器"]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/ScottSloan/Bili23-Downloader"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ScottSloan/Bili23-Downloader/releases/download/v$version/Bili23-Downloader_$version_windows_x64_portable.zip",
+                "extract_dir": "Bili23-Downloader"
+            }
+        }
+    }
+}
