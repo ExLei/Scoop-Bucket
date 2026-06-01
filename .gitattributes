@@ -1,0 +1,19 @@
+# JSON 清单必须使用 CRLF 换行符
+*.json text eol=crlf
+
+# 脚本文件使用 LF
+*.ps1 text eol=lf
+*.sh text eol=lf
+
+# Markdown 文档使用 CRLF
+*.md text eol=crlf
+
+# 其他文本文件自动处理
+*.yml text eol=crlf
+*.yaml text eol=crlf
+*.cfg text eol=crlf
+*.ini text eol=crlf
+*.txt text eol=crlf
+.gitattributes text
+.gitignore text
+LICENSE text eol=crlf
