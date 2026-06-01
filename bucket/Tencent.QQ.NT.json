@@ -1,0 +1,88 @@
+{
+    "version": "9.9.31.260528",
+    "description": "(NT 版本) QQ，腾讯的一款聊天通讯工具",
+    "homepage": "https://im.qq.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://rule.tencent.com/rule/46a15f24-e42c-4cb6-a308-2347139b1201"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ExLei/QQ.NT-windows-Updater/releases/download/v9.9.31.260528/QQ_9.9.31.260528_x64.exe#/dl.7z",
+            "hash": "0beb5cb4ff776cba822caa0abadbd53f5892f12628a86dabea1b372c82c086bc"
+        }
+    },
+    "extract_dir": "Files",
+    "pre_uninstall": [
+        "# 清理 %PUBLIC%\\Documents\\Tencent\\QQ 下的目录联接，避免残留",
+        "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+        "if (Test-Path $dataDir) {",
+        "    Get-ChildItem $dataDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
+        "        if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($_.FullName)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$dataDir = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+        "$persistDir = \"$persist_dir\\QQ_Data\"",
+        "# 确保目录存在",
+        "if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force | Out-Null }",
+        "if (!(Test-Path $dataDir)) { New-Item -ItemType Directory $dataDir -Force | Out-Null }",
+        "# 处理 dataDir 中已有子目录（迁移真实目录或刷新已有 junction）",
+        "Get-ChildItem $dataDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
+        "    $source = $_.FullName",
+        "    $target = Join-Path $persistDir $_.Name",
+        "    if ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($source)",
+        "    } elseif (Test-Path $target) {",
+        "        Copy-Item \"$source\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+        "        Remove-Item $source -Recurse -Force",
+        "    } else {",
+        "        Move-Item $source $target",
+        "    }",
+        "    New-Item -ItemType Junction -Path $source -Target $target | Out-Null",
+        "}",
+        "# 从 persist 重建因更新丢失的 junction",
+        "Get-ChildItem $persistDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
+        "    $junctionPath = Join-Path $dataDir $_.Name",
+        "    if (!(Test-Path $junctionPath)) {",
+        "        New-Item -ItemType Junction -Path $junctionPath -Target $_.FullName | Out-Null",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name QQ -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\QQ.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "QQ.exe",
+            "..\\QQ"
+        ]
+    ],
+    "persist": "QQ_Data",
+    "checkver": {
+        "github": "https://github.com/ExLei/QQ.NT-windows-Updater"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ExLei/QQ.NT-windows-Updater/releases/download/v$version/QQ_$version_x64.exe#/dl.7z"
+            }
+        }
+    }
+}
