@@ -1,0 +1,57 @@
+{
+    "version": "1.8.0",
+    "description": "Task Explorer - 高级任务管理器，深度洞察进程行为，支持内核驱动级监控 | An advanced Task Manager with deep process analysis and kernel driver monitoring",
+    "homepage": "https://github.com/DavidXanatos/TaskExplorer",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/DavidXanatos/TaskExplorer/blob/master/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/DavidXanatos/TaskExplorer/releases/download/v1.8.0/TaskExplorer-v1.8.0.exe",
+            "hash": "e40af0d5cfd43091e626eda631cbc53d4804db129b602180d05d47be137cf744"
+        }
+    },
+    "pre_install": [
+        "# 创建空配置文件占位，确保 persist 将其视为文件而非文件夹",
+        "if (!(Test-Path \"$dir\\TaskExplorer.ini\")) { New-Item -ItemType File \"$dir\\TaskExplorer.ini\" -Force | Out-Null }"
+    ],
+    "post_install": [
+        "# 删除安装残留（调试符号、数字签名、解包脚本等，便携版无需这些文件）",
+        "Remove-Item \"$dir\\*.pdb\", \"$dir\\*.sig\", \"$dir\\install_script.iss\" -Force -ErrorAction SilentlyContinue"
+    ],
+    "installer": {
+        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removable"
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name 'TaskExplorer' -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name 'TaskHelper' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\\Task Explorer.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        ["TaskExplorer.exe", "Task Explorer"]
+    ],
+    "persist": "TaskExplorer.ini",
+    "checkver": {
+        "github": "https://github.com/DavidXanatos/TaskExplorer"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/DavidXanatos/TaskExplorer/releases/download/v$version/TaskExplorer-v$version.exe"
+            }
+        }
+    }
+}
