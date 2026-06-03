@@ -79,18 +79,13 @@
     ],
     "persist": "BaiduNetdisk_Data",
     "checkver": {
-        "url": "https://pan.baidu.com/disk/cmsdata?do=client",
-        "jp": "$.guanjia.url",
-        "regex": "BaiduNetdisk_([\\d.]+)\\.exe"
+        "github": "https://github.com/ExLei/BaiduNetdisk-windows-Updater"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://issuepcdn.baidupcs.com/issue/netdisk/yunguanjia/BaiduNetdisk_$version.exe#/dl.7z"
+                "url": "https://github.com/ExLei/BaiduNetdisk-windows-Updater/releases/download/v$version/BaiduNetdisk_$version.exe#/dl.7z"
             }
-        },
-        "hash": {
-            "mode": "download"
         }
     }
 }
