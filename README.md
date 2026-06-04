@@ -32,6 +32,7 @@ scoop install exlei/{软件包ID}
 | Task Explorer | 1.8.0 | 高级任务管理器，深度洞察进程行为，支持内核驱动级监控 | `persist\TaskExplorer.ini` |
 | FFmpegFreeUI | 5.2 | FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | `persist\Preset`, `persist\Plugin` |
 | WPS Office | 25860 | 一站式办公集成平台，免费无广告，支持 AI 办公 | - |
+| XDown | 2.0.9.5 | 免费无广告的专业文件下载与分享工具，支持 HTTP/BitTorrent/FTP/Magnet 等多种协议 | `persist\LocalData`, `persist\RoamingData`, `persist\LocalDotData` |
 | Game Cheats Manager | 2.4.6 | 游戏修改器管理工具，集成多来源修改器搜索、下载、自动更新等功能 | `persist\data` |
 | Game Save Manager | 2.1.0 | 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | `persist\data` |
 | 百度网盘 | 8.4.8.102 | 百度网盘，百度的一款云存储客户端 | `persist\BaiduNetdisk_Data` |

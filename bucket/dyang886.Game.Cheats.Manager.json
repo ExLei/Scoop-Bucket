@@ -35,6 +35,18 @@
             "Expand-InnoArchive \"$dir\\$fname\" -Removable"
         ]
     },
+    "post_install": [
+        "# 重建 junction（更新后 Scoop 清理旧版本但 persist 数据保留）",
+        "if (!(Test-Path \"$persist_dir\\data\")) { New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null }",
+        "$junction = \"$env:APPDATA\\GCM Settings\"",
+        "if (Test-Path $junction) {",
+        "    $item = Get-Item $junction -Force -ErrorAction SilentlyContinue",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
     "pre_uninstall": [
         "$junction = \"$env:APPDATA\\GCM Settings\"",
         "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",

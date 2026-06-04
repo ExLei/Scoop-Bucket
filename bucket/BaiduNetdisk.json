@@ -54,6 +54,19 @@
         "    }",
         "}"
     ],
+    "post_install": [
+        "$dataDir = \"$env:APPDATA\\baidu\\BaiduNetdisk\"",
+        "$persistDir = \"$persist_dir\\BaiduNetdisk_Data\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $dataDir -Target $persistDir | Out-Null"
+    ],
     "uninstaller": {
         "script": [
             "Stop-Process -Name BaiduNetdisk -Force -ErrorAction SilentlyContinue",

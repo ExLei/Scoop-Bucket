@@ -11,6 +11,14 @@
             "hash": "1d7135681fb63f3b313015df623bae7ba7dd7174ec9833fca7cf9f09101a4419"
         }
     },
+    "notes": [
+        "数据持久化: 应用配置/数据库等数据存储在 persist\\data 目录，更新时不会丢失。"
+    ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\data\")) {",
+        "    New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null",
+        "}"
+    ],
     "uninstaller": {
         "script": [
             "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",

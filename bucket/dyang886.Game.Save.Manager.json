@@ -36,6 +36,7 @@
         "New-ItemProperty -Path 'HKCU:\\Software\\Classes\\.gsmr\\OpenWithProgids' -Name 'GameSaveManagerBackup.gsmr' -PropertyType String -Force | Out-Null",
         "New-Item -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr\\shell\\open\\command' -Force | Out-Null",
         "Set-ItemProperty -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr' -Name '(default)' -Value 'Game Save Manager Backup' -Type String",
+        "New-Item -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr\\DefaultIcon' -Force | Out-Null",
         "Set-ItemProperty -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr\\DefaultIcon' -Name '(default)' -Value \"$exePath,0\" -Type String",
         "Set-ItemProperty -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr\\shell\\open\\command' -Name '(default)' -Value \"`\"$exePath`\" `\"%1`\"\" -Type String"
     ],
@@ -44,6 +45,18 @@
             "Expand-InnoArchive \"$dir\\$fname\" -Removable"
         ]
     },
+    "post_install": [
+        "# 重建 junction（更新后 Scoop 清理旧版本但 persist 数据保留）",
+        "if (!(Test-Path \"$persist_dir\\data\")) { New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null }",
+        "$junction = \"$env:APPDATA\\game-save-manager\"",
+        "if (Test-Path $junction) {",
+        "    $item = Get-Item $junction -Force -ErrorAction SilentlyContinue",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
     "pre_uninstall": [
         "$junction = \"$env:APPDATA\\game-save-manager\"",
         "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",

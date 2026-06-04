@@ -9,11 +9,17 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/a144z/bootice/raw/master/BOOTICEx64.exe",
-            "hash": "708ca37f627961e44b9e64515ac0d162c54d6b87a627ade0ef05ba419cc2d509"
+            "hash": "708ca37f627961e44b9e64515ac0d162c54d6b87a627ade0ef05ba419cc2d509",
+            "shortcuts": [
+                ["BOOTICEx64.exe", "..\\BootICE"]
+            ]
         },
         "32bit": {
             "url": "https://github.com/a144z/bootice/raw/master/BOOTICEx86.exe",
-            "hash": "a65ecb7bcb0fbc02ecc72300e10a36171c55ff322de5f6390669973bf49a2587"
+            "hash": "a65ecb7bcb0fbc02ecc72300e10a36171c55ff322de5f6390669973bf49a2587",
+            "shortcuts": [
+                ["BOOTICEx86.exe", "..\\BootICE"]
+            ]
         }
     },
     "uninstaller": {
@@ -31,8 +37,5 @@
             "    }",
             "}"
         ]
-    },
-    "shortcuts": [
-        ["BOOTICEx64.exe", "..\\BootICE"]
-    ]
+    }
 }

@@ -33,7 +33,7 @@
             "$appDir = Split-Path $dir -Parent",
             "$shell = New-Object -ComObject WScript.Shell",
             "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
-            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Scoop Apps\\Task Explorer.lnk\"",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Task Explorer.lnk\"",
             "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
             "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
             "    }",
@@ -41,7 +41,7 @@
         ]
     },
     "shortcuts": [
-        ["TaskExplorer.exe", "Task Explorer"]
+        ["TaskExplorer.exe", "..\\Task Explorer"]
     ],
     "persist": "TaskExplorer.ini",
     "checkver": {

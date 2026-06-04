@@ -1,0 +1,110 @@
+{
+    "version": "2.0.9.5",
+    "description": "XDown - 免费无广告的专业文件下载与分享工具，支持 HTTP/BitTorrent/FTP/Magnet 等多种协议 | Professional File Download and Sharing Tool",
+    "homepage": "http://xdown.org/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "http://xdown.org/"
+    },
+    "architecture": {
+        "32bit": {
+            "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-2.0.9.5.zip",
+            "hash": "50b6af71420890da1e1c185e3a6c45011e4f512696ece6523c272607d1e31b16",
+            "extract_dir": "xdown"
+        }
+    },
+    "notes": [
+        "浏览器支持: 支持接管 Chrome、Edge Chromium、Firefox 等浏览器下载",
+        "浏览器插件位于应用目录下，安装指南: http://www.xdown.org/extensions/",
+        "",
+        "数据持久化: 应用数据通过目录链接 (junction) 重定向到 Scoop persist 目录。",
+        "卸载时不会残留数据，重新安装自动恢复。"
+    ],
+    "pre_install": [
+        "# 将多个系统数据目录通过 junction 重定向到 persist",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\LocalData\", \"$env:LOCALAPPDATA\\xdown\"),",
+        "    @(\"$persist_dir\\RoamingData\", \"$env:APPDATA\\xdown\"),",
+        "    @(\"$persist_dir\\LocalDotData\", \"$env:LOCALAPPDATA\\.xdown\")",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force | Out-Null }",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($targetDir)",
+        "        } else {",
+        "            Get-ChildItem $targetDir | Move-Item -Destination $persistDir -Force",
+        "            Remove-Item $targetDir -Force -Recurse",
+        "        }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "post_install": [
+        "# 重建 junction（更新后 persist 数据保留，需重新映射）",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\LocalData\", \"$env:LOCALAPPDATA\\xdown\"),",
+        "    @(\"$persist_dir\\RoamingData\", \"$env:APPDATA\\xdown\"),",
+        "    @(\"$persist_dir\\LocalDotData\", \"$env:LOCALAPPDATA\\.xdown\")",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force | Out-Null }",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { [System.IO.Directory]::Delete($targetDir) }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接，不穿透到目标目录",
+        "@(\"$env:LOCALAPPDATA\\xdown\", \"$env:APPDATA\\xdown\", \"$env:LOCALAPPDATA\\.xdown\") | ForEach-Object {",
+        "    if ((Test-Path $_) -and ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "        [System.IO.Directory]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name XDown -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\XDown.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "XDown.exe",
+            "..\\XDown"
+        ]
+    ],
+    "persist": [
+        "LocalData",
+        "RoamingData",
+        "LocalDotData"
+    ],
+    "checkver": {
+        "url": "http://www.xdown.org/",
+        "regex": "/windows/i386/xdown-([\\d.]+).zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-$version.zip",
+                "extract_dir": "xdown"
+            }
+        },
+        "hash": {
+            "mode": "download"
+        }
+    }
+}

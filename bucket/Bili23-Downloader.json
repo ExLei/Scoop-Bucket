@@ -38,6 +38,17 @@
         "}",
         "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
     ],
+    "post_install": [
+        "# 重建 junction（更新后 Scoop 清理旧版本但 persist 数据保留，需重新映射）",
+        "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
+        "if (Test-Path $junction) {",
+        "    $item = Get-Item $junction -Force -ErrorAction SilentlyContinue",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
     "pre_uninstall": [
         "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
         "$junction = \"$env:APPDATA\\Bili23 Downloader\"",
