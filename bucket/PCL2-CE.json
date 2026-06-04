@@ -1,0 +1,117 @@
+{
+    "version": "2.14.6",
+    "description": "PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | Plain Craft Launcher Community Edition",
+    "homepage": "https://github.com/PCL-Community/PCL-CE",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/PCL-Community/PCL-CE/blob/dev/LICENCE"
+    },
+    "notes": [
+        "数据持久化: 启动器配置、缓存等数据存储在 %APPDATA%\\.pclce 目录",
+        "已通过目录链接 (junction) 重定向到 Scoop persist 目录。",
+        "卸载时不会残留数据，重新安装自动恢复。",
+        "",
+        "PCL2-CE 需要在 Windows 10 20H2 或更高版本上运行。",
+        "启动 Minecraft 游戏需安装 Java 运行时。"
+    ],
+    "suggest": {
+        "Java 运行时": "java/temurin-lts-jre"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PCL-Community/PCL-CE/releases/download/v2.14.6/PCL2_CE_Release_x64.exe",
+            "hash": "1acbea60764b87e7b8276cfefd221f262448401decdd88591b964054c4f708da",
+            "bin": [
+                [
+                    "PCL2_CE_Release_x64.exe",
+                    "PCL2-CE"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PCL2_CE_Release_x64.exe",
+                    "..\\PCL2-社区版"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/PCL-Community/PCL-CE/releases/download/v2.14.6/PCL2_CE_Release_ARM64.exe",
+            "hash": "2465bce1a6ce7d1c7b01a2370bf83b9c5dfa6315e107555f9a3096df3b0f8d25",
+            "bin": [
+                [
+                    "PCL2_CE_Release_ARM64.exe",
+                    "PCL2-CE"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "PCL2_CE_Release_ARM64.exe",
+                    "..\\PCL2-社区版"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "# 确保 persist 数据目录存在",
+        "if (!(Test-Path \"$persist_dir\\data\")) {",
+        "    New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null",
+        "}",
+        "",
+        "# 清理已有 junction 或迁移非 Scoop 安装的真实数据",
+        "$junction = \"$env:APPDATA\\.pclce\"",
+        "if (Test-Path $junction) {",
+        "    if ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    } else {",
+        "        Write-Host \"迁移 %APPDATA%\\.pclce 已有数据到 persist 目录...\"",
+        "        Get-ChildItem $junction | Move-Item -Destination \"$persist_dir\\data\" -Force",
+        "        Remove-Item $junction -Force -Recurse",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "# 创建/重建 junction（覆盖首次安装与更新两种场景）",
+        "$junction = \"$env:APPDATA\\.pclce\"",
+        "if (Test-Path $junction) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$junction = \"$env:APPDATA\\.pclce\"",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name PCL2_CE_Release_* -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\PCL2-社区版.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/PCL-Community/PCL-CE"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PCL-Community/PCL-CE/releases/download/v$version/PCL2_CE_Release_x64.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/PCL-Community/PCL-CE/releases/download/v$version/PCL2_CE_Release_ARM64.exe"
+            }
+        }
+    }
+}
