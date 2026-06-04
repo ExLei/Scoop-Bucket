@@ -170,7 +170,7 @@
             "Remove-Item \"$env:AppData\\kingsoft\\kaccooffice6ntsdk\" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null",
             "Remove-Item \"$env:AppData\\kingsoft\\qing\" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null",
             "Remove-Item \"$env:AppData\\kingsoft\\wps\" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null",
-            "reg.exe delete HKCU\\SOFTWARE\\Kingsoft /f",
+            "reg.exe delete HKCU\\SOFTWARE\\Kingsoft /f"
         ]
     },
     "checkver": {
