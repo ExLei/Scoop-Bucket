@@ -41,6 +41,7 @@ scoop install exlei/{软件包ID}
 | Game Cheats Manager | 2.4.6 | 游戏修改器管理工具，集成多来源修改器搜索、下载、自动更新等功能 | `persist\data` |
 | Game Save Manager | 2.1.0 | 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | `persist\data` |
 | 百度网盘 | 8.4.8.102 | 百度网盘，百度的一款云存储客户端 | `persist\BaiduNetdisk_Data` |
+| HMCL | 3.14.1 | HMCL - 多功能、跨平台的 Minecraft 启动器 | `persist\data` |
 
 ## 自动更新
 

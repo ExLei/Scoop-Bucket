@@ -1,0 +1,95 @@
+{
+    "version": "3.14.1",
+    "description": "HMCL - 多功能、跨平台的 Minecraft 启动器 | Hello Minecraft Launcher, a multifunctional and cross-platform Minecraft launcher",
+    "homepage": "https://hmcl.huangyuhui.net/",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/HMCL-dev/HMCL/blob/main/LICENSE"
+    },
+    "notes": [
+        "数据持久化: 启动器配置、账号信息等数据存储在 %APPDATA%\\.hmcl 目录",
+        "已通过目录链接 (junction) 重定向到 Scoop persist 目录。",
+        "卸载时不会残留数据，重新安装自动恢复。",
+        "",
+        "HMCL 内置 JRE 运行时，无需额外安装 Java 即可启动启动器。",
+        "启动 Minecraft 游戏仍需安装 Java 运行时。"
+    ],
+    "suggest": {
+        "Java 运行时": "java/temurin-lts-jre"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/HMCL-dev/HMCL/releases/download/v3.14.1/HMCL-3.14.1.exe#/HMCL.exe",
+            "hash": "7416eecf41e7e0c3af9d5d00c9de3c02e6c2c42390ba0500bdc0c9cec2b875a7"
+        }
+    },
+    "pre_install": [
+        "# 确保 persist 数据目录存在",
+        "if (!(Test-Path \"$persist_dir\\data\")) {",
+        "    New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null",
+        "}",
+        "",
+        "# 清理已有 junction 或迁移非 Scoop 安装的真实数据",
+        "$junction = \"$env:APPDATA\\.hmcl\"",
+        "if (Test-Path $junction) {",
+        "    if ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    } else {",
+        "        Write-Host \"迁移 %APPDATA%\\.hmcl 已有数据到 persist 目录...\"",
+        "        Get-ChildItem $junction | Move-Item -Destination \"$persist_dir\\data\" -Force",
+        "        Remove-Item $junction -Force -Recurse",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "# 创建/重建 junction（覆盖首次安装与更新两种场景）",
+        "$junction = \"$env:APPDATA\\.hmcl\"",
+        "if (Test-Path $junction) {",
+        "    if ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($junction)",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$junction = \"$env:APPDATA\\.hmcl\"",
+        "if ((Test-Path $junction) -and ((Get-Item $junction -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "    [System.IO.Directory]::Delete($junction)",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name HMCL -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\HMCL.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "bin": "HMCL.exe",
+    "shortcuts": [
+        [
+            "HMCL.exe",
+            "..\\HMCL"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/HMCL-dev/HMCL"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/HMCL-dev/HMCL/releases/download/v$version/HMCL-$version.exe#/HMCL.exe"
+            }
+        }
+    }
+}
