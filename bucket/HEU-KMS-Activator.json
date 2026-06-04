@@ -1,0 +1,87 @@
+{
+    "version": "63.3.4",
+    "description": "HEU KMS Activator - KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活，支持 UEFI、KMS38、数字许可证等多种激活方式 | A powerful KMS activator for Windows and Office",
+    "homepage": "https://github.com/zbezj/HEU_KMS_Activator",
+    "license": "Freeware",
+    "notes": [
+        "# 静默参数",
+        "",
+        "/? 查看静默参数",
+        "/smart 智能激活",
+        "/dig 数字许可证激活Win10/11",
+        "/k38 激活Win10/11 KMS38",
+        "/lok 添加KMS38保护",
+        "/oem OEM激活Win Vista/7/Server",
+        "/od1 OEM模式1(默认)",
+        "/od2 OEM模式2",
+        "/kwi 使用KMS激活Windows",
+        "/kof 使用KMS激活Office",
+        "/kd1 KMS模式1(默认)",
+        "/kd2 KMS模式2",
+        "/wxp 激活Windows XP",
+        "/r2v Office R2V",
+        "/ren 安装自动续期功能",
+        "/unr 卸载自动续期功能",
+        "/reb 重启计算机",
+        "/nologo 使用静默参数时不显示logo",
+        "",
+        "# 无人值守静默方式以数字许可永久激活系统：",
+        "HEU_KMS_Activator.exe /kwi /dig /nologo",
+        "",
+        "注：Defender会误报威胁，需要提前加入排除！"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/zbezj/HEU_KMS_Activator/releases/download/63.3.4/HEU_KMS_Activator_v63.3.4.rar#/dl.7z",
+            "hash": "04e6e467df02252794e5fee3a8935bb16beb7ee2d8f42bd144ff82e261a8d17f"
+        }
+    },
+    "bin": [
+        [
+            "HEU_KMS_Activator_v63.3.4.exe",
+            "HEU_KMS_Activator"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "HEU_KMS_Activator_v63.3.4.exe",
+            "..\\HEU KMS Activator"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name HEU_KMS_Activator* -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\HEU KMS Activator.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/zbezj/HEU_KMS_Activator"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zbezj/HEU_KMS_Activator/releases/download/$version/HEU_KMS_Activator_v$version.rar#/dl.7z"
+            }
+        },
+        "bin": [
+            [
+                "HEU_KMS_Activator_v$version.exe",
+                "HEU_KMS_Activator"
+            ]
+        ],
+        "shortcuts": [
+            [
+                "HEU_KMS_Activator_v$version.exe",
+                "..\\HEU KMS Activator"
+            ]
+        ]
+    }
+}
