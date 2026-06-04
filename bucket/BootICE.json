@@ -1,0 +1,38 @@
+{
+    "version": "1.3.3.2",
+    "description": "BootICE - USB启动盘制作/引导维护工具 MBR/PBR编辑及BCD配置管理 | A powerful boot sector and partition management utility (final release by Pauly@www.ipauly.com)",
+    "homepage": "https://github.com/a144z/bootice",
+    "license": {
+        "identifier": "Freeware",
+        "url": "http://www.ipauly.com"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/a144z/bootice/raw/master/BOOTICEx64.exe",
+            "hash": "708ca37f627961e44b9e64515ac0d162c54d6b87a627ade0ef05ba419cc2d509"
+        },
+        "32bit": {
+            "url": "https://github.com/a144z/bootice/raw/master/BOOTICEx86.exe",
+            "hash": "a65ecb7bcb0fbc02ecc72300e10a36171c55ff322de5f6390669973bf49a2587"
+        }
+    },
+    "uninstaller": {
+        "script": [
+            "# 确保进程已终止再继续后续操作",
+            "Stop-Process -Name 'BOOTICEx64','BOOTICEx86' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 快捷方式清理，仅删除指向本应用目录的 Scoop 快捷方式",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\BootICE.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        ["BOOTICEx64.exe", "..\\BootICE"]
+    ]
+}
