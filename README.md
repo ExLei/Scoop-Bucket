@@ -3,7 +3,7 @@
 [![GitHub Actions CI Status](https://img.shields.io/github/actions/workflow/status/Exlei/Scoop-Bucket/ci.yml?style=flat-square&logo=github&label=Tests)](https://github.com/Exlei/Scoop-Bucket/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/Exlei/Scoop-Bucket.svg?style=flat-square)](./LICENSE)
 [![Target Windows 10/11](https://img.shields.io/badge/Target-Windows%2010%2F11-0067B8.svg?style=flat-square)](https://www.microsoft.com/en-us/windows)
-[![Repo size](https://badgen.net/github/repo-size/Exlei/Scoop-Bucket?style=flat-square)](https://github.com/Exlei/Scoop-Bucket)
+[![Repo size](https://badgen.net/github/repo-size/Exlei/Scoop-Bucket)](https://github.com/Exlei/Scoop-Bucket)
 [![Manifest Count](https://img.shields.io/github/directory-file-count/Exlei/Scoop-Bucket/bucket?type=file&extension=json&style=flat-square&logo=JSON&label=Manifests)](https://github.com/Exlei/Scoop-Bucket/tree/master/bucket)
 
 一个 [Scoop](https://scoop.sh/) 软件仓库（bucket），由 Exlei 维护。
