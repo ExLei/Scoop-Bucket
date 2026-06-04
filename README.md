@@ -21,12 +21,17 @@ scoop install exlei/{软件包ID}
 | FluxDown | 0.1.42 | Rust 驱动的多协议下载管理器 (便携版) | `persist\flux_down.db` |
 | Watt Toolkit | 3.1.0 | Watt Toolkit (原名 Steam++) - 开源跨平台的多功能游戏工具箱，集成网络加速、账号切换、库存管理等功能 | `persist\AppData` |
 | Velotype | 0.5.0 | 基于 Rust + GPUI 的原生 Markdown 编辑器（便携版），支持所见即所得与源码编辑双模式 | `persist\data` |
-| Bili23-Downloader | 2.00.6 | 开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类 | `persist\data` |
+| Bili23-Downloader | 2.00.7 | 开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类 | `persist\data` |
+| BootICE | 1.3.3.2 | BootICE - USB启动盘制作/引导维护工具 MBR/PBR编辑及BCD配置管理 | - |
 | Context Menu Manager Plus | 1.6.8 | Context Menu Manager Plus - Windows 右键菜单管理工具，支持新菜单监控、传统菜单管理、Win11 新菜单管理、Shell Extension 探测等功能 | `%ProgramData%\ContextMenuMgr\` |
+| mpv-lazy | 20260510 | 全格式视频播放懒人包，基于 mpv 播放器集成大量配置和脚本 | - |
+| Motrix Next | 3.9.3 | 全功能下载管理器重构版，支持 HTTP/FTP/SFTP/BitTorrent/Magnet 等多种协议 | `persist\LocalAppData` |
+| HEU KMS Activator | 63.3.4 | KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活 | - |
 | ZedG | 1.4.4 | Zed Editor（汉化版），基于 Rust 的高性能代码编辑器本地化版本 | `persist\appdata`, `persist\local` |
 | Starlight GUI | 3.0.0-pre3 | 基于 C++/WinRT WinUI3 的 Windows 内核级工具箱，集成任务管理、文件管理、系统监控等功能 | `persist\StarlightGUI.json` |
 | Task Explorer | 1.8.0 | 高级任务管理器，深度洞察进程行为，支持内核驱动级监控 | `persist\TaskExplorer.ini` |
 | FFmpegFreeUI | 5.2 | FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | `persist\Preset`, `persist\Plugin` |
+| WPS Office | 25860 | 一站式办公集成平台，免费无广告，支持 AI 办公 | - |
 | Game Cheats Manager | 2.4.6 | 游戏修改器管理工具，集成多来源修改器搜索、下载、自动更新等功能 | `persist\data` |
 | Game Save Manager | 2.1.0 | 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | `persist\data` |
 | 百度网盘 | 8.4.8.102 | 百度网盘，百度的一款云存储客户端 | `persist\BaiduNetdisk_Data` |
