@@ -7,6 +7,11 @@
         "url": "http://xdown.org/"
     },
     "architecture": {
+        "64bit": {
+            "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-2.0.9.5.zip",
+            "hash": "50b6af71420890da1e1c185e3a6c45011e4f512696ece6523c272607d1e31b16",
+            "extract_dir": "xdown"
+        },
         "32bit": {
             "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-2.0.9.5.zip",
             "hash": "50b6af71420890da1e1c185e3a6c45011e4f512696ece6523c272607d1e31b16",
@@ -98,6 +103,10 @@
     },
     "autoupdate": {
         "architecture": {
+            "64bit": {
+                "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-$version.zip",
+                "extract_dir": "xdown"
+            },
             "32bit": {
                 "url": "https://raw.githubusercontent.com/xdown-dev/dl/main/dl/windows/i386/xdown-$version.zip",
                 "extract_dir": "xdown"
