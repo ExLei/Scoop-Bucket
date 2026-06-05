@@ -40,6 +40,9 @@ scoop install exlei/{软件包ID}
 | XDown | 2.0.9.5 | 免费无广告的专业文件下载与分享工具，支持 HTTP/BitTorrent/FTP/Magnet 等多种协议 | `persist\LocalData`, `persist\RoamingData`, `persist\LocalDotData` |
 | Game Cheats Manager | 2.4.6 | 游戏修改器管理工具，集成多来源修改器搜索、下载、自动更新等功能 | `persist\data` |
 | Game Save Manager | 2.1.0 | 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | `persist\data` |
+| 123云盘 | 3.1.6.0 | 123云盘，一款空间大、不限速、专注大文件传输分发的云存储服务产品 | `persist\AppData` |
+| 阿里云盘 | 6.9.1 | 阿里云盘，一款速度快、不打扰、够安全、易于分享的网盘 | `persist\AppData` |
+| 夸克 | 6.8.2.847 | 夸克浏览器，学习、工作、生活的高效拍档 | `persist\LocalAppData`, `persist\AppData` |
 | 百度网盘 | 8.4.8.102 | 百度网盘，百度的一款云存储客户端 | `persist\BaiduNetdisk_Data` |
 | HMCL | 3.14.1 | HMCL - 多功能、跨平台的 Minecraft 启动器 | `persist\data` |
 | PCL2-CE | 2.14.6 | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |

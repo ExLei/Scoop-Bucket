@@ -1,0 +1,128 @@
+{
+    "version": "6.9.1",
+    "description": "阿里云盘，一款速度快、不打扰、够安全、易于分享的网盘",
+    "homepage": "https://alipan.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://terms.alicdn.com/legal-agreement/terms/suit_bu1_dingtalk/suit_bu1_dingtalk202103191654_76478.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.aliyundrive.net/downloads/apps/desktop/update/6.9.1/win32/x64/aDrive-6.9.1.exe#/dl.7z",
+            "hash": "cc40289de6c35821214c816b8a1101c3ada822f05c7da3b770ae432067eea76a"
+        }
+    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$TEMP\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 创建 persist 目录并迁移数据",
+        "$persistDir = \"$persist_dir\\AppData\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "$dataDir = \"$env:APPDATA\\aDrive\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Get-ChildItem $dataDir | ForEach-Object {",
+        "            $target = Join-Path $persistDir $_.Name",
+        "            if (Test-Path $target) {",
+        "                Copy-Item \"$($_.FullName)\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+        "                Remove-Item $_.FullName -Recurse -Force",
+        "            } else {",
+        "                Move-Item $_.FullName $target",
+        "            }",
+        "        }",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$persistDir = \"$persist_dir\\AppData\"",
+        "$dataDir = \"$env:APPDATA\\aDrive\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $dataDir -Target $persistDir | Out-Null"
+    ],
+    "pre_uninstall": [
+        "$dataDir = \"$env:APPDATA\\aDrive\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name aDrive -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\阿里云盘.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "post_uninstall": [
+        "# 清理残留数据",
+        "@(",
+        "    \"$env:APPDATA\\utForpc\",",
+        "    \"$env:APPDATA\\aDrive\"",
+        ") | ForEach-Object {",
+        "    if (Test-Path $_) {",
+        "        if ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($_)",
+        "        } else {",
+        "            Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue",
+        "        }",
+        "    }",
+        "}",
+        "",
+        "# 清理 smartdrive 协议注册",
+        "Get-Item 'HKCU:\\SOFTWARE\\Classes\\smartdrive' -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 清理 UTForPC 注册表",
+        "Get-Item 'HKCU:\\SOFTWARE\\UTForPC' -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 清理开机自启项",
+        "Remove-ItemProperty -Path 'HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'com.alicloud.smartdrive' -ErrorAction SilentlyContinue"
+    ],
+    "shortcuts": [
+        [
+            "aDrive.exe",
+            "..\\阿里云盘"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$manifest = winget show --id Alibaba.aDrive --source winget --accept-source-agreements 2>$null",
+            "$version = ($manifest | Select-String '^Version:').Line.Trim() -replace '^Version:\\s*'",
+            "$url = ($manifest | Select-String 'Installer Url:').Line.Trim() -replace '^Installer\\s*Url:\\s*'",
+            "return \"$version=====$url\""
+        ],
+        "regex": "(.*)=====(?<url>.*)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$matchUrl#/dl.7z",
+                "hash": {
+                    "mode": "download"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,184 @@
+{
+    "version": "3.1.6.0",
+    "description": "123云盘，一款空间大、不限速、专注大文件传输分发的云存储服务产品",
+    "homepage": "https://www.123pan.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.123pan.com/UserAgreement"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://app.123957.com/pc-pro/windows/316/123pan_3.1.6.exe#/dl.7z",
+            "hash": "c36d4160e6272bda658782779d11149300c1387e06120099d4ae5289d33e50db"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\app.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 注册 pan123:// 协议（每次安装/更新都刷新，指向 current 路径）",
+        "$exePath = \"$(Split-Path $dir -Parent)\\current\\123pan.exe\"",
+        "$regPath = 'HKCU:\\SOFTWARE\\Classes\\pan123'",
+        "New-Item -Path \"$regPath\\shell\\open\\command\" -Force | Out-Null",
+        "Set-ItemProperty -Path $regPath -Name '(default)' -Value '123pan Protocol' -Type String",
+        "Set-ItemProperty -Path $regPath -Name 'URL Protocol' -Value '' -Type String",
+        "Set-ItemProperty -Path \"$regPath\\shell\\open\\command\" -Name '(default)' -Value \"`\"$exePath`\" `\"%1`\"\"",
+        "",
+        "# 创建 persist 目录并迁移 AppData 数据",
+        "$persistDir = \"$persist_dir\\AppData\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "$dataDir = \"$env:APPDATA\\123pan\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Get-ChildItem $dataDir | ForEach-Object {",
+        "            $target = Join-Path $persistDir $_.Name",
+        "            if (Test-Path $target) {",
+        "                Copy-Item \"$($_.FullName)\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+        "                Remove-Item $_.FullName -Recurse -Force",
+        "            } else {",
+        "                Move-Item $_.FullName $target",
+        "            }",
+        "        }",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}",
+        "",
+        "# 创建 persist 目录并迁移 LocalAppData 数据",
+        "$persistDir = \"$persist_dir\\LocalAppData\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "$dataDir = \"$env:LOCALAPPDATA\\123pan\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Get-ChildItem $dataDir | ForEach-Object {",
+        "            $target = Join-Path $persistDir $_.Name",
+        "            if (Test-Path $target) {",
+        "                Copy-Item \"$($_.FullName)\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+        "                Remove-Item $_.FullName -Recurse -Force",
+        "            } else {",
+        "                Move-Item $_.FullName $target",
+        "            }",
+        "        }",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$persistDir = \"$persist_dir\\AppData\"",
+        "$dataDir = \"$env:APPDATA\\123pan\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $dataDir -Target $persistDir | Out-Null",
+        "",
+        "$persistDir = \"$persist_dir\\LocalAppData\"",
+        "$dataDir = \"$env:LOCALAPPDATA\\123pan\"",
+        "if (!(Test-Path $persistDir)) {",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "}",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    } else {",
+        "        Remove-Item $dataDir -Recurse -Force",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $dataDir -Target $persistDir | Out-Null"
+    ],
+    "pre_uninstall": [
+        "$dataDir = \"$env:APPDATA\\123pan\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    }",
+        "}",
+        "$dataDir = \"$env:LOCALAPPDATA\\123pan\"",
+        "if (Test-Path $dataDir) {",
+        "    if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($dataDir)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 123pan -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\123云盘.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "post_uninstall": [
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\pan123' -Recurse -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 清理 HKLM 注册表（需管理员权限，无权限时静默跳过）",
+        "@(",
+        "    'HKLM:\\SOFTWARE\\Classes\\*\\shell\\123pan',",
+        "    'HKLM:\\SOFTWARE\\Classes\\Directory\\shell\\123pan',",
+        "    'HKLM:\\SOFTWARE\\WOW6432Node\\123pan',",
+        "    'HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\123pan'",
+        ") | ForEach-Object {",
+        "    Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue",
+        "}",
+        "",
+        "# 清理残留数据",
+        "@(",
+        "    \"$env:LOCALAPPDATA\\123pan-updater\",",
+        "    \"$env:LOCALAPPDATA\\123pan\",",
+        "    \"$env:APPDATA\\123pan\",",
+        "    \"$env:ProgramData\\123SyncCloud\"",
+        ") | ForEach-Object {",
+        "    if (Test-Path $_) {",
+        "        if ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($_)",
+        "        } else {",
+        "            Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "123pan.exe",
+            "..\\123云盘"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$manifest = winget show --id 123.123pan --source winget --accept-source-agreements 2>$null",
+            "$version = ($manifest | Select-String '^Version:').Line.Trim() -replace '^Version:\\s*'",
+            "$url = ($manifest | Select-String 'Installer Url:').Line.Trim() -replace '^Installer\\s*Url:\\s*'",
+            "return \"$version=====$url\""
+        ],
+        "regex": "(.*)=====(?<url>.*)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$matchUrl#/dl.7z",
+                "hash": {
+                    "mode": "download"
+                }
+            }
+        }
+    }
+}

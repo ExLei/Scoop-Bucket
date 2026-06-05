@@ -1,0 +1,139 @@
+{
+    "version": "6.8.2.847",
+    "description": "夸克浏览器，学习、工作、生活的高效拍档",
+    "homepage": "https://www.quark.cn/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://broccoli.uc.cn/apps/quark_icloud_pay/routes/service_help"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://umcdn.quark.cn/download/37212/quarkpc/pcquark@homepage_oficial/QuarkPC_V6.8.2.847_pc_pf30002_(zh-cn)_release_(Build2984965-1000-x64).exe",
+            "hash": "18b80ee4025a918cfba5f28c10ccae4a146b2e6d01cdedf60e23d83726b81702"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-InnoArchive \"$dir\\$fname\" \"$dir\" -Removable",
+            "Move-Item -Path \"$dir\\{code_GetAppExeDestName}\" -Destination \"$dir\\quark.exe\" -Force",
+            "Move-Item -Path \"$dir\\{code_GetAppProxyExeDestName}\" -Destination \"$dir\\quark_proxy.exe\" -Force",
+            "",
+            "# 创建 persist 目录并迁移数据",
+            "@(",
+            "    @{Persist = \"$persist_dir\\LocalAppData\"; Data = \"$env:LOCALAPPDATA\\Quark\"},",
+            "    @{Persist = \"$persist_dir\\AppData\"; Data = \"$env:APPDATA\\Quark\"}",
+            ") | ForEach-Object {",
+            "    $persistDir = $_.Persist",
+            "    $dataDir = $_.Data",
+            "    if (!(Test-Path $persistDir)) {",
+            "        New-Item -ItemType Directory $persistDir -Force | Out-Null",
+            "    }",
+            "    if (Test-Path $dataDir) {",
+            "        if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+            "            [System.IO.Directory]::Delete($dataDir)",
+            "        } else {",
+            "            Get-ChildItem $dataDir | ForEach-Object {",
+            "                $target = Join-Path $persistDir $_.Name",
+            "                if (Test-Path $target) {",
+            "                    Copy-Item \"$($_.FullName)\\*\" $target -Recurse -Force -ErrorAction SilentlyContinue",
+            "                    Remove-Item $_.FullName -Recurse -Force",
+            "                } else {",
+            "                    Move-Item $_.FullName $target",
+            "                }",
+            "            }",
+            "            Remove-Item $dataDir -Recurse -Force",
+            "        }",
+            "    }",
+            "}"
+        ]
+    },
+    "post_install": [
+        "# 重建 Junction（Scoop 更新流程需要）",
+        "@(",
+        "    @{Persist = \"$persist_dir\\LocalAppData\"; Data = \"$env:LOCALAPPDATA\\Quark\"},",
+        "    @{Persist = \"$persist_dir\\AppData\"; Data = \"$env:APPDATA\\Quark\"}",
+        ") | ForEach-Object {",
+        "    $persistDir = $_.Persist",
+        "    $dataDir = $_.Data",
+        "    if (!(Test-Path $persistDir)) {",
+        "        New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "    }",
+        "    if (Test-Path $dataDir) {",
+        "        if ((Get-Item $dataDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($dataDir)",
+        "        } else {",
+        "            Remove-Item $dataDir -Recurse -Force",
+        "        }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $dataDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# 删除目录联接（保留数据）",
+        "@(\"$env:LOCALAPPDATA\\Quark\", \"$env:APPDATA\\Quark\") | ForEach-Object {",
+        "    if ((Test-Path $_) -and ((Get-Item $_ -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "        [System.IO.Directory]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name quark -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\夸克.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "post_uninstall": [
+        "# 清理残留数据",
+        "@(",
+        "    \"$env:LOCALAPPDATA\\QuarkUpdater\",",
+        "    \"$env:LOCALAPPDATA\\QuarkCloudDrive\",",
+        "    \"$env:APPDATA\\The Quark Authors\",",
+        "    \"$env:APPDATA\\Quark\",",
+        "    \"$env:LOCALAPPDATA\\Quark\"",
+        ") | ForEach-Object {",
+        "    if (Test-Path $_) {",
+        "        if ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($_)",
+        "        } else {",
+        "            Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue",
+        "        }",
+        "    }",
+        "}",
+        "",
+        "# 清理计划任务",
+        "Remove-Item \"$env:WINDIR\\system32\\Tasks\\QuarkUpdaterUser\" -Force -ErrorAction SilentlyContinue"
+    ],
+    "shortcuts": [
+        [
+            "quark.exe",
+            "..\\夸克"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$manifest = winget show --id Alibaba.Quark --source winget --accept-source-agreements 2>$null",
+            "$version = ($manifest | Select-String '^Version:').Line.Trim() -replace '^Version:\\s*'",
+            "$url = ($manifest | Select-String 'Installer Url:').Line.Trim() -replace '^Installer\\s*Url:\\s*'",
+            "return \"$version=====$url\""
+        ],
+        "regex": "(.*)=====(?<url>.*)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$matchUrl",
+                "hash": {
+                    "mode": "download"
+                }
+            }
+        }
+    }
+}
