@@ -1,5 +1,5 @@
 {
-    "version": "0.1.45",
+    "version": "0.1.46",
     "description": "FluxDown - Rust 驱动的多协议下载管理器（便携版）| A modern multi-protocol download manager (Portable)",
     "homepage": "https://fluxdown.zerx.dev",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://fluxdown.zerx.dev/api/download/FluxDown-0.1.45-windows-x64-portable.zip",
-            "hash": "6382ea0bbb457e0acee0f3c09767aa3f4b238c1f49de26ae18d9489b3cc5b60f"
+            "url": "https://fluxdown.zerx.dev/api/download/FluxDown-0.1.46-windows-x64-portable.zip",
+            "hash": "d5e6bd6b4eabb690196ecf681bb47fc50377abad80f8d3529288935205d1764b"
         }
     },
     "pre_install": [
