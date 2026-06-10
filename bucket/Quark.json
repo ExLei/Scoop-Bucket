@@ -1,5 +1,5 @@
 {
-    "version": "6.8.2.847",
+    "version": "6.8.7.860",
     "description": "夸克浏览器，学习、工作、生活的高效拍档",
     "homepage": "https://www.quark.cn/",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://umcdn.quark.cn/download/37212/quarkpc/pcquark@homepage_oficial/QuarkPC_V6.8.2.847_pc_pf30002_(zh-cn)_release_(Build2984965-1000-x64).exe",
-            "hash": "18b80ee4025a918cfba5f28c10ccae4a146b2e6d01cdedf60e23d83726b81702"
+            "url": "https://umcdn.quark.cn/download/37212/quarkpc/pcquark@homepage_oficial/QuarkPC_V6.8.7.860_pc_pf30002_(zh-cn)_release_(Build3015131-1000-x64).exe",
+            "hash": "c5033a5b7f4a1fa5c5c42f99bb3c211c2aa6680cc19535e96e71a18329b80bc2"
         }
     },
     "installer": {
