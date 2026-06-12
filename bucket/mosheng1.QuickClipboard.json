@@ -1,5 +1,5 @@
 {
-    "version": "0.3.2",
+    "version": "0.4.0",
     "description": "一个功能强大的剪贴板管理工具 (便携版) | A powerful clipboard management tool (Portable)",
     "homepage": "https://quickclipboard.cn/",
     "license": {
@@ -7,13 +7,11 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v0.3.2/QuickClipboard_0.3.2_portable.exe#/QuickClipboard_portable.exe",
-            "hash": "1d7135681fb63f3b313015df623bae7ba7dd7174ec9833fca7cf9f09101a4419"
+            "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v0.4.0/QuickClipboard_0.4.0_portable.exe#/QuickClipboard_portable.exe",
+            "hash": "664c259b14b338b56256f6f5372120f8a583f381bc9483d130fc214109efab84"
         }
     },
-    "notes": [
-        "数据持久化: 应用配置/数据库等数据存储在 persist\\data 目录，更新时不会丢失。"
-    ],
+    "notes": "数据持久化: 应用配置/数据库等数据存储在 persist\\data 目录，更新时不会丢失。",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\data\")) {",
         "    New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null",
@@ -36,7 +34,10 @@
         ]
     },
     "shortcuts": [
-        ["QuickClipboard_portable.exe", "..\\QuickClipboard"]
+        [
+            "QuickClipboard_portable.exe",
+            "..\\QuickClipboard"
+        ]
     ],
     "persist": "data",
     "checkver": {
