@@ -40,13 +40,19 @@
     ],
     "persist": "flux_down.db",
     "checkver": {
-        "url": "https://fluxdown.zerx.dev/api/release",
-        "jp": "$.version"
+        "script": [
+            "$release = (Invoke-RestMethod 'https://fluxdown.zerx.dev/api/changelog').releases[0]",
+            "$version = $release.tag -replace '^v'",
+            "$portable = $release.assets | Where-Object { $_.name -match 'windows-x64-portable\\.zip$' } | Select-Object -First 1",
+            "$url = 'https://fluxdown.zerx.dev' + $portable.download_url",
+            "Write-Output \"$version $url\""
+        ],
+        "regex": "([\\d.]+)\\s+(https?://.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://fluxdown.zerx.dev/api/download/FluxDown-$version-windows-x64-portable.zip"
+                "url": "$match2"
             }
         },
         "hash": {
