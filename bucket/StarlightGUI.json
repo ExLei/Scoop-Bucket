@@ -37,7 +37,13 @@
     ],
     "persist": "StarlightGUI.json",
     "checkver": {
-        "github": "https://github.com/OpenStarlight/StarlightGUI"
+        "script": [
+            "$releases = Invoke-RestMethod 'https://api.github.com/repos/OpenStarlight/StarlightGUI/releases'",
+            "$latest = $releases | Select-Object -First 1",
+            "$version = $latest.tag_name -replace '^v'",
+            "Write-Output $version"
+        ],
+        "regex": "([\\d.]+(?:-[\\w.]+)?)"
     },
     "autoupdate": {
         "architecture": {
