@@ -1,5 +1,5 @@
 {
-    "version": "2.00.7",
+    "version": "2.10.0",
     "description": "Bili23-Downloader - 开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类等功能 | Open Source, Free, Cross-Platform Bilibili Video Downloader",
     "homepage": "https://bili23.scott-sloan.cn/",
     "license": {
@@ -13,8 +13,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ScottSloan/Bili23-Downloader/releases/download/v2.00.7/Bili23-Downloader_2.00.7_windows_x64_portable.zip",
-            "hash": "4e7b73f2a43fdb1ffe775792a6b07608d1568cc33cf3188f709a8febaebeb421",
+            "url": "https://github.com/ScottSloan/Bili23-Downloader/releases/download/v2.10.0/Bili23-Downloader_2.10.0_windows_x64_portable.zip",
+            "hash": "bf90aec2d9d3850ac0c4beee0562987df6a854b8cd528ac31c18fc60f327972b",
             "extract_dir": "Bili23-Downloader"
         }
     },
