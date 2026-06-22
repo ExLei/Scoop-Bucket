@@ -1,5 +1,5 @@
 {
-    "version": "5.2",
+    "version": "6.0.9",
     "description": "FFmpegFreeUI (3FUI) - FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | A lightweight professional GUI shell for FFmpeg on Windows",
     "homepage": "https://3fui.top",
     "license": {
@@ -8,9 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/5.2/FFmpegFreeUI.SingleFile.x64.7z",
-            "hash": "a12fe6b940f1cb618d1fbdccb407db65b0f98abeecda752e58598c4dbb5b607d",
-            "extract_dir": "FFmpegFreeUI SingleFile x64"
+            "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/6.0.9/FFmpegFreeUI.x64.exe#/FFmpegFreeUI.exe",
+            "hash": "3d89dc9899c64018c31223a8508c679699e873c396a5e69abd19c72a4df1309f"
+        },
+        "arm64": {
+            "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/6.0.9/FFmpegFreeUI.arm64.exe#/FFmpegFreeUI.exe",
+            "hash": "a00de1fb9a804124df99c065ccf2f64bf9a24181584622e6f05ca043c73aca5a"
         }
     },
     "pre_install": [
@@ -52,8 +55,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.SingleFile.x64.7z",
-                "extract_dir": "FFmpegFreeUI SingleFile x64"
+                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.x64.exe#/FFmpegFreeUI.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/Lake1059/FFmpegFreeUI/releases/download/$version/FFmpegFreeUI.arm64.exe#/FFmpegFreeUI.exe"
             }
         }
     }
