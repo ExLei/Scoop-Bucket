@@ -1,5 +1,5 @@
 {
-    "version": "3.0.0-pre3",
+    "version": "4.0.0",
     "description": "Starlight GUI - 一个强大而易用的 Windows 内核级工具箱，使用 C++/WinRT WinUI3 编写 | A powerful and easy-to-use Windows kernel-level toolbox, written with C++/WinRT WinUI3",
     "homepage": "https://github.com/OpenStarlight/StarlightGUI",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/v3.0.0-pre3/Starlight.GUI-v3.0.0-pre3-Package.zip",
-            "hash": "0f390dc65c30ddde246cdb6fd0da0e22bf806c3c77f0ebc5a4eda4182e3245c9"
+            "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/v4.0.0/StarlightGUI-v4.0.0-Free.zip",
+            "hash": "c7d902ac3aa94ca18112992dbe1c941dc2403621b7b4e8de34729bca7791d957"
         }
     },
     "pre_install": [
@@ -39,16 +39,20 @@
     "checkver": {
         "script": [
             "$releases = Invoke-RestMethod 'https://api.github.com/repos/OpenStarlight/StarlightGUI/releases'",
-            "$latest = $releases | Select-Object -First 1",
+            "# 优先预发行版（prerelease=true），无预发行版时回退到最新正式版",
+            "$pre = $releases | Where-Object { $_.prerelease } | Select-Object -First 1",
+            "$latest = if ($pre) { $pre } else { $releases | Select-Object -First 1 }",
             "$version = $latest.tag_name -replace '^v'",
-            "Write-Output $version"
+            "# 取 .zip 资产，兼容预发行版 -Package.zip 与正式版 -Free.zip 两种命名",
+            "$url = ($latest.assets | Where-Object { $_.name -like '*.zip' } | Select-Object -First 1).browser_download_url",
+            "Write-Output \"$version|$url\""
         ],
-        "regex": "([\\d.]+(?:-[\\w.]+)?)"
+        "regex": "([^|]+)\\|([^|]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/v$version/Starlight.GUI-v$version-Package.zip"
+                "url": "$match2"
             }
         }
     }
