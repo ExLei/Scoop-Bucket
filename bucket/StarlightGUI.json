@@ -1,5 +1,5 @@
 {
-    "version": "4.0.0",
+    "version": "3.0.0-pre3",
     "description": "Starlight GUI - 一个强大而易用的 Windows 内核级工具箱，使用 C++/WinRT WinUI3 编写 | A powerful and easy-to-use Windows kernel-level toolbox, written with C++/WinRT WinUI3",
     "homepage": "https://github.com/OpenStarlight/StarlightGUI",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/v4.0.0/StarlightGUI-v4.0.0-Free.zip",
-            "hash": "c7d902ac3aa94ca18112992dbe1c941dc2403621b7b4e8de34729bca7791d957"
+            "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/v3.0.0-pre3/Starlight.GUI-v3.0.0-pre3-Package.zip",
+            "hash": "0f390dc65c30ddde246cdb6fd0da0e22bf806c3c77f0ebc5a4eda4182e3245c9"
         }
     },
     "pre_install": [
@@ -33,7 +33,10 @@
         ]
     },
     "shortcuts": [
-        ["StarlightGUI.exe", "..\\Starlight GUI"]
+        [
+            "StarlightGUI.exe",
+            "..\\Starlight GUI"
+        ]
     ],
     "persist": "StarlightGUI.json",
     "checkver": {
