@@ -1,15 +1,15 @@
 {
-    "version": "0.1.48",
+    "version": "0.1.49",
     "description": "FluxDown - Rust 驱动的多协议下载管理器（便携版）| A modern multi-protocol download manager (Portable)",
-    "homepage": "https://fluxdown.zerx.dev",
+    "homepage": "https://github.com/zerx-lab/FluxDown",
     "license": {
-        "identifier": "Proprietary",
-        "url": "https://fluxdown.zerx.dev"
+        "identifier": "AGPL-3.0-only",
+        "url": "https://github.com/zerx-lab/FluxDown/blob/main/LICENSE"
     },
     "architecture": {
         "64bit": {
-            "url": "https://fluxdown.zerx.dev/api/download/FluxDown-0.1.46-windows-x64-portable.zip?tag=v0.1.48",
-            "hash": "4eeaebef214239ebf8f6cb778e4ad9d4bf3fced698cb0505c4c80f7e9a5e8435"
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.1.49/FluxDown-0.1.49-windows-x64-portable.zip",
+            "hash": "c75edc7913bfde447bdbae110b737da1f0095ab59a931f6097b343035b5cb1b9"
         }
     },
     "pre_install": [
@@ -40,23 +40,13 @@
     ],
     "persist": "flux_down.db",
     "checkver": {
-        "script": [
-            "$release = (Invoke-RestMethod 'https://fluxdown.zerx.dev/api/changelog').releases[0]",
-            "$version = $release.tag -replace '^v'",
-            "$portable = $release.assets | Where-Object { $_.name -match 'windows-x64-portable\\.zip$' } | Select-Object -First 1",
-            "$url = 'https://fluxdown.zerx.dev' + $portable.download_url",
-            "Write-Output \"$version $url\""
-        ],
-        "regex": "([\\d.]+)\\s+(https?://.+)"
+        "github": "https://github.com/zerx-lab/FluxDown"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$match2"
+                "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-x64-portable.zip"
             }
-        },
-        "hash": {
-            "mode": "download"
         }
     },
     "notes": [
