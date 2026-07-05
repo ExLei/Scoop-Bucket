@@ -10,12 +10,19 @@
         "64bit": {
             "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.1.55/FluxDown-0.1.55-windows-x64-portable.zip",
             "hash": "4dfd497a4e9901dda9179a19e1857f5b6c97bcb8651f3b2041c7ec8fd7f17798"
+        },
+        "arm64": {
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.1.55/FluxDown-0.1.55-windows-arm64-portable.zip",
+            "hash": "3fd9d54ca258df1ccb217d3fa5f14d55e61dd7408a5cb4447af1d342c8b1d047"
         }
     },
     "pre_install": [
         "# 创建空数据库文件占位，确保 persist 将其视为文件而非文件夹",
-        "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }"
+        "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }",
+        "# 创建 JSON 配置文件占位并写入有效内容 {}，避免应用首次读取时抛出 JsonException",
+        "if (!(Test-Path \"$dir\\settings.json\")) { Set-Content \"$dir\\settings.json\" '{}' -Encoding UTF8 }"
     ],
+    "bin": "flux_down.exe",
     "uninstaller": {
         "script": [
             "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
@@ -38,7 +45,12 @@
             "..\\FluxDown"
         ]
     ],
-    "persist": "flux_down.db",
+    "persist": [
+        "flux_down.db",
+        "bt_session",
+        "settings.json",
+        "logs"
+    ],
     "checkver": {
         "github": "https://github.com/zerx-lab/FluxDown"
     },
@@ -46,6 +58,9 @@
         "architecture": {
             "64bit": {
                 "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-x64-portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-arm64-portable.zip"
             }
         }
     },
@@ -53,7 +68,10 @@
         "FluxDown 便携版数据持久化说明:",
         "  - 已内置 portable 标记，运行数据自动存储在应用目录",
         "  - 任务记录/配置等核心数据通过 flux_down.db（SQLite）持久化",
-        "  - 更新版本时 flux_down.db 会自动保留，下载记录不丢失",
+        "  - BT 会话状态（断点续传）通过 bt_session/ 目录持久化",
+        "  - 界面设置（窗口位置、主题、语言）通过 settings.json 持久化",
+        "  - 应用日志通过 logs/ 目录持久化",
+        "  - 更新版本时以上数据均自动保留，下载记录不丢失",
         "",
         "浏览器扩展（需配合本应用使用）:",
         "  Chrome: https://chromewebstore.google.com/detail/fluxdown/meleenglfggcmcajknpeeeiobnpfmahc",
