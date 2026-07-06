@@ -1,5 +1,5 @@
 {
-    "version": "63.4.0",
+    "version": "64.0.0",
     "description": "HEU KMS Activator - KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活，支持 UEFI、KMS38、数字许可证等多种激活方式 | A powerful KMS activator for Windows and Office",
     "homepage": "https://github.com/zbezj/HEU_KMS_Activator",
     "license": "Freeware",
@@ -32,19 +32,19 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zbezj/HEU_KMS_Activator/releases/download/63.4.0/HEU_KMS_Activator_v63.4.0.rar#/dl.7z",
-            "hash": "821d3d91309cf0f5669f73538737bc6ad144fbb90aa2fe9ec070e5b5367a27db"
+            "url": "https://github.com/zbezj/HEU_KMS_Activator/releases/download/64.0.0/HEU_KMS_Activator_v64.0.0.rar#/dl.7z",
+            "hash": "7e4f770fcf41ef71c6c20949b818193e16c76e68c664571a6316b4b8d22832e5"
         }
     },
     "bin": [
         [
-            "HEU_KMS_Activator_v63.4.0.exe",
+            "HEU_KMS_Activator_v64.0.0.exe",
             "HEU_KMS_Activator"
         ]
     ],
     "shortcuts": [
         [
-            "HEU_KMS_Activator_v63.4.0.exe",
+            "HEU_KMS_Activator_v64.0.0.exe",
             "..\\HEU KMS Activator"
         ]
     ],
