@@ -22,7 +22,6 @@
         "# 创建 JSON 配置文件占位并写入有效内容 {}，避免应用首次读取时抛出 JsonException",
         "if (!(Test-Path \"$dir\\settings.json\")) { Set-Content \"$dir\\settings.json\" '{}' -Encoding UTF8 }"
     ],
-    "bin": "flux_down.exe",
     "uninstaller": {
         "script": [
             "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
@@ -62,6 +61,9 @@
             "arm64": {
                 "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-arm64-portable.zip"
             }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
         }
     },
     "notes": [
@@ -75,7 +77,10 @@
         "",
         "浏览器扩展（需配合本应用使用）:",
         "  Chrome: https://chromewebstore.google.com/detail/fluxdown/meleenglfggcmcajknpeeeiobnpfmahc",
-        "  Firefox: https://addons.mozilla.org/zh-CN/firefox/addon/fluxdown",
-        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd"
+        "  Firefox: https://addons.mozilla.org/firefox/addon/fluxdown",
+        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd",
+        "",
+        "命令行客户端 fluxdown.exe（独立下载，不在本便携包中）:",
+        "  https://github.com/zerx-lab/FluxDown/releases/tag/cli-v$version"
     ]
 }
