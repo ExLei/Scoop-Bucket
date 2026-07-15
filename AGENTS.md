@@ -70,6 +70,19 @@
 - **autoupdate 禁止硬编码版本** —— `autoupdate` 中 URL 必须使用 `$version` 等变量，不得出现写死的版本号字符串。
 - **依赖管理** —— .NET 运行时等外部依赖用 `suggest`，禁止 `depends`。
 
+### 向上游仓库（ScoopInstaller/Extras）移植
+
+本仓库 manifest 面向个人使用，部分约定与 [ScoopInstaller/Extras](https://github.com/ScoopInstaller/Extras) 的 CONTRIBUTING.md 规则不同。从本仓库移植软件到 Extras 时，必须在提交前逐项执行以下清理——这些差异无法被 CI 自动检测，只能人工审查。
+
+- **移除 `bin`（GUI 应用）** —— 纯 GUI 应用（不接受命令行参数）在 Extras 中不得加入 `bin`，即使在本仓库中作为启动快捷方式使用。Extras 只对接受 CLI 参数的程序暴露 `bin`。参考 [Extras CONTRIBUTING.md](https://github.com/ScoopInstaller/.github/blob/main/.github/CONTRIBUTING.md#for-scoop-buckets)。
+- **移除 `uninstaller`** —— Extras 禁止在脚本中终止进程（`Stop-Process`）、禁止删除 Scoop 安装目录范围外的文件（包括开始菜单快捷方式、注册表项）。本仓库「卸载流程」中的 `uninstaller.script` 模式在 Extras 中**完全不适用**——Scoop 的 `shortcuts` 字段自动处理快捷方式的创建与清理。参考 Extras 中 `bucket/abdownloadmanager.json`。
+- **`autoupdate.hash.url` 使用 `$baseurl`** —— 本仓库的 `autoupdate` 可能省略 `hash` 块（Scoop 自动从 GitHub 获取），但 Extras **必须**包含完整 hash 提取配置。移植时需补全 `hash.url`，使用 `"url": "$baseurl/SHA256SUMS.txt"` 等变量化写法，禁止硬编码完整 Release URL。
+- **保持 `pre_install` 结构不变** —— 移植时**禁止**将占位文件的创建逻辑从 `pre_install` 拆分到 `post_install`。Scoop 的 persist 步骤在 `pre_install` 之后、`post_install` 之前执行。拆入 `post_install` 会导致持久化文件在 persist 之后才创建，形成目录 junction（而非文件硬链接），造成 data 持久化失败。典型教训：`bucket/zerx.FluxDown.json` 中 `flux_down.db` 和 `settings.json` 均在 `pre_install` 创建，移植时被错误拆分到 `post_install`，导致 Extras PR #18232 经历 9 天调试。
+- **描述简洁、事实性** —— Extras 不接受营销/宣传口吻的描述。不应出现「免费」「极速」「惊艳」「替代 XXX」等措辞。描述应为对软件功能的一句话客观陈述。良好的示例：`"A Rust-powered download manager with HTTP, FTP, BitTorrent and HLS/DASH streaming support."`。
+- **快捷方式名不使用 `..\\` 前缀** —— Extras 的 shortcuts 名称为纯应用名，不采用本仓库的 `..\\应用名` 格式。
+- **`autoupdate.hash` 无需 `mode`** —— GitHub 源的 hash 提取允许省略 `mode` 字段（Scoop 自动处理）。本仓库清单中常见的「不声明 hash 块」是个人使用习惯，移植到 Extras 后需补全 `hash.url` 但不需额外声明 `mode`。
+- **`checkver.github` 对象形式** —— 同本仓库要求，Extras 也要求 `{ "github": "..." }` 对象形式，不得使用字符串简写。
+
 ## CI
 
 - **Update:** UTC 00:00/06:00/12:00/18:00，`SKIP_UPDATED: '1'`，可手动触发。
