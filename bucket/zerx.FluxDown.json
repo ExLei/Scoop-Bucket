@@ -17,10 +17,8 @@
         }
     },
     "pre_install": [
-        "# 创建空数据库文件占位，确保 persist 将其视为文件而非文件夹",
-        "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }",
-        "# 创建 JSON 配置文件占位并写入有效内容 {}，避免应用首次读取时抛出 JsonException",
-        "if (!(Test-Path \"$dir\\settings.json\")) { Set-Content \"$dir\\settings.json\" '{}' -Encoding UTF8 }"
+        "# 创建 portable_data 持久化目录，应用 0.2.3+ 将运行数据统一存储于此子目录",
+        "if (!(Test-Path \"$dir\\portable_data\")) { New-Item -ItemType Directory \"$dir\\portable_data\" -Force | Out-Null }"
     ],
     "uninstaller": {
         "script": [
@@ -44,12 +42,7 @@
             "..\\FluxDown"
         ]
     ],
-    "persist": [
-        "flux_down.db",
-        "bt_session",
-        "settings.json",
-        "logs"
-    ],
+    "persist": "portable_data",
     "checkver": {
         "github": "https://github.com/zerx-lab/FluxDown"
     },
@@ -68,11 +61,11 @@
     },
     "notes": [
         "FluxDown 便携版数据持久化说明:",
-        "  - 已内置 portable 标记，运行数据自动存储在应用目录",
-        "  - 任务记录/配置等核心数据通过 flux_down.db（SQLite）持久化",
-        "  - BT 会话状态（断点续传）通过 bt_session/ 目录持久化",
-        "  - 界面设置（窗口位置、主题、语言）通过 settings.json 持久化",
-        "  - 应用日志通过 logs/ 目录持久化",
+        "  - 已内置 portable 标记，运行数据自动存储在 portable_data/ 子目录",
+        "  - 任务记录/配置等核心数据通过 portable_data/flux_down.db（SQLite）持久化",
+        "  - BT 会话状态（断点续传）通过 portable_data/bt_session/ 目录持久化",
+        "  - 界面设置（窗口位置、主题、语言）通过 portable_data/settings.json 持久化",
+        "  - 应用日志通过 portable_data/logs/ 目录持久化",
         "  - 更新版本时以上数据均自动保留，下载记录不丢失",
         "",
         "浏览器扩展（需配合本应用使用）:",
