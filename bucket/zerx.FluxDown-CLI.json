@@ -1,5 +1,5 @@
 {
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "FluxDown CLI - 命令行客户端，远程管理 FluxDown 下载任务 | Command-line client for remote download management",
     "homepage": "https://github.com/zerx-lab/FluxDown",
     "license": {
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zerx-lab/FluxDown/releases/download/cli-v0.3.0/FluxDown-CLI-0.3.0-windows-x64.zip",
-            "hash": "881b9747214b37e1774c43e615248d987f2d3920ee34d71ca274f306ab82042b"
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/cli-v0.3.1/FluxDown-CLI-0.3.1-windows-x64.zip",
+            "hash": "b2a1dc8f0b2a2fe46533db5529252acfead9cd134d42c01126705fabc97b3a5b"
         },
         "arm64": {
-            "url": "https://github.com/zerx-lab/FluxDown/releases/download/cli-v0.3.0/FluxDown-CLI-0.3.0-windows-arm64.zip",
-            "hash": "0aa2ca55212695dd8509a480ca04dcca4b05a58d95e0939d1c347ff55ca79c4d"
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/cli-v0.3.1/FluxDown-CLI-0.3.1-windows-arm64.zip",
+            "hash": "9febc593b94eaecfe1c52f2e6a6c9b6ae39f779a1c4cda2ac08a9dd4cdfac009"
         }
     },
     "bin": "fluxdown.exe",
