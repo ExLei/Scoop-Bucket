@@ -1,5 +1,5 @@
 {
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "Game Save Manager (GSM) - 游戏存档管理工具，支持自动检测、备份、还原游戏存档，集成 PCGamingWiki 数据库 | A game save manager with auto-detection, backup, restore, and PCGamingWiki database integration",
     "homepage": "https://gamezonelabs.com",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/dyang886/Game-Save-Manager/releases/download/v2.1.0/Game.Save.Manager.Setup.2.1.0.exe",
-            "hash": "408b13b79044196d4d377626b5ba557f2642d7954404c1a5c64a659771e1ae06"
+            "url": "https://github.com/dyang886/Game-Save-Manager/releases/download/v2.2.0/Game.Save.Manager.Setup.2.2.0.exe",
+            "hash": "e20a5859cd641d9857ef2bdb141722501e95204cf2b02b41b8c12e0900fda041"
         }
     },
     "pre_install": [
@@ -41,9 +41,7 @@
         "Set-ItemProperty -Path 'HKCU:\\Software\\Classes\\GameSaveManagerBackup.gsmr\\shell\\open\\command' -Name '(default)' -Value \"`\"$exePath`\" `\"%1`\"\" -Type String"
     ],
     "installer": {
-        "script": [
-            "Expand-InnoArchive \"$dir\\$fname\" -Removable"
-        ]
+        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removable"
     },
     "post_install": [
         "# 重建 junction（更新后 Scoop 清理旧版本但 persist 数据保留）",
@@ -83,7 +81,10 @@
         ]
     },
     "shortcuts": [
-        ["Game Save Manager.exe", "..\\Game Save Manager"]
+        [
+            "Game Save Manager.exe",
+            "..\\Game Save Manager"
+        ]
     ],
     "persist": "data",
     "notes": [
