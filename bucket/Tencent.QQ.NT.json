@@ -8,7 +8,7 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ExLei/QQ.NT-windows-Updater/releases/download/v9.9.33.260730/QQ_9.9.33.260730_x64.exe#/dl.7z",
+            "url": "https://github.com/ExLei/Software-Mirror/releases/download/v9.9.33.260730/QQ_9.9.33.260730_x64.exe#/dl.7z",
             "hash": "7bcc1ad50c19d14c9aad17778a0359aacd84b4d6c54ef1c71d938e0a6e2f2f5d"
         }
     },
@@ -76,12 +76,12 @@
     ],
     "persist": "QQ_Data",
     "checkver": {
-        "github": "https://github.com/ExLei/QQ.NT-windows-Updater"
+        "github": "https://github.com/ExLei/Software-Mirror"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/ExLei/QQ.NT-windows-Updater/releases/download/v$version/QQ_$version_x64.exe#/dl.7z"
+                "url": "https://github.com/ExLei/Software-Mirror/releases/download/v$version/QQ_$version_x64.exe#/dl.7z"
             }
         }
     }
