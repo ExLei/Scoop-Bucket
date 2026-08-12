@@ -24,7 +24,8 @@ scoop install exlei/{软件包ID}
 | 微信 | 4.1.10.27 | 微信，腾讯的一款聊天通讯工具 | `persist\xwechat_files` |
 | Codex++ | 1.2.45 | Codex++ - OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理工具，支持供应商切换、协议转换、会话管理与界面增强 | `%APPDATA%\Codex++` |
 | QuickClipboard | 0.3.2 | 剪贴板管理工具 (便携版)，支持文本/图片/文件历史、截图/OCR | `persist\data` |
-| FluxDown | 0.2.3 | Rust 驱动的多协议下载管理器（便携版，开源 AGPL-3.0，支持 x64/arm64）| `persist\flux_down.db等` |
+| FluxDown | 0.3.2 | Rust 驱动的多协议下载管理器（便携版，开源 AGPL-3.0，支持 x64/arm64）| `persist\flux_down.db等` |
+| FluxDown Preview | 0.4.0-rc.1 | FluxDown 预览版（pre-release），抢先体验最新功能（便携版，开源 AGPL-3.0，支持 x64/arm64）| `persist\portable_data` |
 | FluxDown CLI | 0.1.59 | FluxDown 命令行客户端，远程管理下载任务（支持 x64/arm64）| - |
 | Watt Toolkit | 3.1.0 | Watt Toolkit (原名 Steam++) - 开源跨平台的多功能游戏工具箱，集成网络加速、账号切换、库存管理等功能 | `persist\AppData` |
 | Velotype | 0.5.0 | 基于 Rust + GPUI 的原生 Markdown 编辑器（便携版），支持所见即所得与源码编辑双模式 | `persist\data` |
