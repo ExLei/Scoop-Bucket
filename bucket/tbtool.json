@@ -1,0 +1,98 @@
+{
+    "version": "2026.08",
+    "description": "图吧工具箱 - DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具（含 AIDA64、CPU-Z、FurMark、CrystalDiskInfo 等）",
+    "homepage": "https://www.tbtool.cn/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.tbtool.cn/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://apac.tualatin.club/%E5%9B%BE%E5%90%A7%E5%B7%A5%E5%85%B7%E7%AE%B1202608%E5%AE%89%E8%A3%85%E5%8C%85.exe#/setup.exe",
+            "hash": "a7c707d8714791990613b2d20eb59c8e7854d5c0ae20fe616b583175b3436768"
+        }
+    },
+    "pre_install": [
+        "# 单文件 persist 占位（守卫式，安装器亦会写入默认配置；确保 persist 将其识别为文件而非文件夹）",
+        "if (!(Test-Path \"$dir\\Config.ini\")) { New-Item -ItemType File \"$dir\\Config.ini\" -Force | Out-Null }"
+    ],
+    "installer": {
+        "script": [
+            "# Inno Setup 7 静默安装（innounp 对 Inno 7 大包存在随机崩溃 bug 无法离线解包，改用官方安装器静默安装）",
+            "# /CURRENTUSER 写 HKCU 免提权；/NOICONS + /TASKS=!desktopicon 跳过开始菜单与桌面快捷方式，由 Scoop 统一管理",
+            "$procArgs = @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', '/NOICONS', '/TASKS=!desktopicon', ('/DIR=\"' + $dir + '\"'))",
+            "$proc = Start-Process -FilePath \"$dir\\$fname\" -ArgumentList $procArgs -Wait -PassThru",
+            "if ($proc.ExitCode -ne 0) { throw \"安装器返回错误代码 $($proc.ExitCode)\" }",
+            "",
+            "# 主程序名随版本号变化（图吧工具箱2026.exe），重命名为固定名供 shortcuts 引用",
+            "$main = Get-ChildItem \"$dir\" -Filter '图吧工具箱*.exe' | Where-Object Name -ne $fname | Select-Object -First 1",
+            "if ($main) { Rename-Item $main.FullName \"$dir\\tbtool.exe\" -Force } else { throw '未找到图吧工具箱主程序' }",
+            "",
+            "# 清理安装器本体（约 207MB）与 Inno 卸载器残留（卸载由 Scoop 接管）",
+            "Remove-Item \"$dir\\$fname\" -Force",
+            "Remove-Item \"$dir\\unins000.exe\", \"$dir\\unins000.dat\" -Force -ErrorAction SilentlyContinue"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name tbtool -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name '图吧工具箱2026' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单与桌面快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(",
+            "    \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\图吧工具箱.lnk\",",
+            "    \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\图吧工具箱.lnk\",",
+            "    \"$([Environment]::GetFolderPath('Desktop'))\\图吧工具箱.lnk\"",
+            ") | ForEach-Object {",
+            "    if ((Test-Path $_) -and ($shell.CreateShortcut($_).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $_ -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "post_uninstall": [
+        "# 清理 Inno 卸载注册表项（/CURRENTUSER 安装于 HKCU）",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{7B0CC9B6-78D5-4103-A070-EC35B69E92B8}_is1' -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
+    "shortcuts": [
+        [
+            "tbtool.exe",
+            "..\\图吧工具箱"
+        ]
+    ],
+    "persist": [
+        "Config.ini",
+        "skin\\user"
+    ],
+    "checkver": {
+        "url": "https://www.tbtool.cn/download/",
+        "regex": "最新版本：([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://apac.tualatin.club/%E5%9B%BE%E5%90%A7%E5%B7%A5%E5%85%B7%E7%AE%B1$cleanVersion%E5%AE%89%E8%A3%85%E5%8C%85.exe#/setup.exe",
+                "hash": {
+                    "mode": "download"
+                }
+            }
+        }
+    },
+    "notes": [
+        "图吧工具箱说明:",
+        "  - 官网: https://www.tbtool.cn （备用: https://tbtool.dawnstd.cn）",
+        "  - 内置 80+ 硬件检测工具，分类存放于 tools/ 目录，工具列表与硬件天梯图由主程序统一管理",
+        "  - 更新请使用工具箱内置\"检查更新\"，或通过 scoop update 更新",
+        "",
+        "数据持久化:",
+        "  - 主程序设置通过 persist/Config.ini 持久化（皮肤、显示选项等）",
+        "  - 自定义皮肤素材通过 persist/skin/user 持久化",
+        "",
+        "安全提醒（来自官方更新日志）:",
+        "  - 必应搜索到的\"图吧工具箱\"下载站均为假冒（银狐木马），真官网 2025 年 4 月起被必应屏蔽",
+        "  - 官方不会通过夸克网盘、迅雷网盘分发，仅提供 123 网盘与官网直链"
+    ]
+}

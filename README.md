@@ -49,6 +49,7 @@ scoop install exlei/{软件包ID}
 | 百度网盘 | 8.4.8.102 | 百度网盘，百度的一款云存储客户端 | `persist\BaiduNetdisk_Data` |
 | HMCL | 3.14.1 | HMCL - 多功能、跨平台的 Minecraft 启动器 | `persist\data` |
 | PCL2-CE | 2.14.6 | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |
+| 图吧工具箱 | 2026.08 | DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具 | `persist\Config.ini`, `persist\skin\user` |
 
 ## 自动更新
 
