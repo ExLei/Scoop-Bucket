@@ -1,5 +1,5 @@
 {
-    "version": "0.4.0-rc.1",
+    "version": "0.4.8-rc.1",
     "description": "FluxDown 预览版 - Rust 驱动的多协议下载管理器（便携版，含最新功能但可能不稳定）| A modern multi-protocol download manager (Preview, Portable)",
     "homepage": "https://github.com/zerx-lab/FluxDown",
     "license": {
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.4.0-rc.1/FluxDown-0.4.0-rc.1-windows-x64-portable.zip",
-            "hash": "69b0c5a953274d5bb25b5018ca0a3bb9abb8b4147de4343aa8328ff164353686"
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.4.8-rc.1/FluxDown-0.4.8-rc.1-windows-x64-portable.zip",
+            "hash": "f0abe05503f7ac6298d27164192428dd83504b9db75127b1dfb29ceef81102ed"
         },
         "arm64": {
-            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.4.0-rc.1/FluxDown-0.4.0-rc.1-windows-arm64-portable.zip",
-            "hash": "bd66e0239624b828028128d7fe54a5f4b72c029a07c5c3083a61085be6b4b8df"
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.4.8-rc.1/FluxDown-0.4.8-rc.1-windows-arm64-portable.zip",
+            "hash": "0e422c01f4604475fd15c7fd1f8f822fba0ee3edb743b9dca66c2058a250034e"
         }
     },
     "pre_install": [
