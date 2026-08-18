@@ -1,5 +1,5 @@
 {
-    "version": "9.9.33.260730",
+    "version": "9.9.33.260813",
     "description": "(NT 版本) QQ，腾讯的一款聊天通讯工具",
     "homepage": "https://im.qq.com/",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ExLei/Software-Mirror/releases/download/v9.9.33.260730/QQ_9.9.33.260730_x64.exe#/dl.7z",
-            "hash": "7bcc1ad50c19d14c9aad17778a0359aacd84b4d6c54ef1c71d938e0a6e2f2f5d"
+            "url": "https://github.com/ExLei/Software-Mirror/releases/download/v9.9.33.260813/QQ_9.9.33.260813_x64.exe#/dl.7z",
+            "hash": "b25c0d3ce9df764074a9118d0ded927e1b2d7ebf60e306112e8df18a040ec492"
         }
     },
     "extract_dir": "Files",
