@@ -94,5 +94,5 @@
 - **没有** **`opencode.json`**，项目配置在 `.agents/skills/`
 - **只需** **`GITHUB_TOKEN`**，无需其他密钥
 - **README 与清单同步** —— 新增/删除/更新软件包配置时，必须同步修改 `README.md` 中的软件表格（安装命令、版本、描述）
-- **所有提交信息必须为中文**
+- **所有提交信息必须为中文 遵循中文 CC 规范**
 - **Lint:** 更改软件包配置后运行 `pwsh bin/lint.ps1` / `powershell bin/lint.ps1` 然后 `pwsh bin/test.ps1` / `powershell bin/test.ps1`，覆盖规则详见脚本注释
