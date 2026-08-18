@@ -16,6 +16,10 @@ scoop bucket add exlei https://github.com/Exlei/Scoop-Bucket
 # 安装软件
 scoop install exlei/{软件包ID}
 ```
+## 自动更新
+
+本仓库使用 GitHub Actions 自动检查并更新软件版本，每天执行四次（UTC 00:00、06:00、12:00、18:00）。
+
 ## 包含的软件
 
 | 软件 | 描述 | 数据目录 |
@@ -50,10 +54,6 @@ scoop install exlei/{软件包ID}
 | HMCL | HMCL - 多功能、跨平台的 Minecraft 启动器 | `persist\data` |
 | PCL2-CE | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |
 | 图吧工具箱 | DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具 | `persist\Config.ini`, `persist\skin\user` |
-
-## 自动更新
-
-本仓库使用 GitHub Actions 自动检查并更新软件版本，每天执行四次（UTC 00:00、06:00、12:00、18:00）。
 
 ## 手动触发更新
 
