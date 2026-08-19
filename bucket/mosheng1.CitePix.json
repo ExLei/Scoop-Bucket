@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "description": "面向 Windows 的高性能截图、标注、OCR 与桌面贴图工具 (便携版) | A high-performance screenshot, annotation, OCR and pin tool for Windows (Portable)",
+    "homepage": "https://github.com/mosheng1/CitePix-feedback",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://github.com/mosheng1/CitePix-feedback"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mosheng1/CitePix-feedback/releases/download/v0.2.0/CitePix-0.2.0-x64.zip",
+            "hash": "a2b97cd5100f7ddb97290f0d74e1cbdcdd924d5d02e2022db105f17276001fe3"
+        }
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name CitePix -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\CitePix.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "CitePix.exe",
+            "..\\CitePix"
+        ]
+    ],
+    "persist": "CitePixData",
+    "checkver": {
+        "github": "https://github.com/mosheng1/CitePix-feedback"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mosheng1/CitePix-feedback/releases/download/v$version/CitePix-$version-x64.zip"
+            }
+        }
+    },
+    "notes": [
+        "CitePix 便携版数据持久化说明:",
+        "  - 压缩包内置 CitePix.portable 标记，应用自动以便携模式运行",
+        "  - 截图历史、贴图分组、OCR 记录、配置与日志统一存储在 CitePixData/ 子目录（已持久化）",
+        "  - 更新版本时以上数据均自动保留"
+    ]
+}

@@ -28,6 +28,7 @@ scoop install exlei/{软件包ID}
 | 微信 | 微信，腾讯的一款聊天通讯工具 | `persist\xwechat_files` |
 | Codex++ | Codex++ - OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理工具，支持供应商切换、协议转换、会话管理与界面增强 | `%APPDATA%\Codex++` |
 | QuickClipboard | 剪贴板管理工具 (便携版)，支持文本/图片/文件历史、截图/OCR | `persist\data` |
+| CitePix | 高性能截图、标注、OCR 与桌面贴图工具 (便携版，Rust 构建，原 PixKeep) | `persist\CitePixData` |
 | FluxDown | Rust 驱动的多协议下载管理器（便携版，开源 AGPL-3.0，支持 x64/arm64）| `persist\flux_down.db等` |
 | FluxDown Preview | FluxDown 预览版（pre-release），抢先体验最新功能（便携版，开源 AGPL-3.0，支持 x64/arm64）| `persist\portable_data` |
 | FluxDown CLI | FluxDown 命令行客户端，远程管理下载任务（支持 x64/arm64）| - |
