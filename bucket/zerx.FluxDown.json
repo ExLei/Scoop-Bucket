@@ -36,6 +36,33 @@
             "}"
         ]
     },
+    "pre_uninstall": [
+        "# 卸载前清理运行时写入的注册表（值指向本应用目录才删，避免误删其他安装方式/客户端）",
+        "$appDir = Split-Path $dir -Parent",
+        "# .torrent 指向键依赖 ProgID 归属判断，须在 ProgID 清理前处理",
+        "$ext = (Get-ItemProperty 'HKCU:\\Software\\Classes\\.torrent' -ErrorAction SilentlyContinue).'(default)'",
+        "$extCmd = (Get-ItemProperty \"HKCU:\\Software\\Classes\\$ext\\shell\\open\\command\" -ErrorAction SilentlyContinue).'(default)'",
+        "if (($ext -eq 'FluxDown.TorrentFile') -and ($extCmd -like \"*$appDir\\*\")) {",
+        "    Remove-Item 'HKCU:\\Software\\Classes\\.torrent' -Force -ErrorAction SilentlyContinue",
+        "}",
+        "# 浏览器扩展 NMH 键 + fluxdown/ed2k/magnet 协议键 + .torrent ProgID（command 或键默认值指向本应用才删）",
+        "@(",
+        "    'Software\\Google\\Chrome\\NativeMessagingHosts\\com.fluxdown.nmh',",
+        "    'Software\\Microsoft\\Edge\\NativeMessagingHosts\\com.fluxdown.nmh',",
+        "    'Software\\Mozilla\\NativeMessagingHosts\\com.fluxdown.nmh',",
+        "    'Software\\Classes\\fluxdown',",
+        "    'Software\\Classes\\ed2k',",
+        "    'Software\\Classes\\magnet',",
+        "    'Software\\Classes\\FluxDown.TorrentFile'",
+        ") | ForEach-Object {",
+        "    $key = \"HKCU:\\$_\"",
+        "    $val = (Get-ItemProperty \"$key\\shell\\open\\command\" -ErrorAction SilentlyContinue).'(default)'",
+        "    if (!$val) { $val = (Get-ItemProperty $key -ErrorAction SilentlyContinue).'(default)' }",
+        "    if ($val -like \"*$appDir\\*\") {",
+        "        Remove-Item $key -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "flux_down.exe",
