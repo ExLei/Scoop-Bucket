@@ -122,6 +122,7 @@
             "$manifest = winget show --id Alibaba.Quark --source winget --accept-source-agreements 2>$null",
             "$version = ($manifest | Select-String '^Version:').Line.Trim() -replace '^Version:\\s*'",
             "$url = ($manifest | Select-String 'Installer Url:').Line.Trim() -replace '^Installer\\s*Url:\\s*'",
+            "$url = $url -replace '^https?://[^/]+/',''",
             "return \"$version=====$url\""
         ],
         "regex": "(.*)=====(?<url>.*)"
@@ -129,7 +130,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchUrl",
+                "url": "https://umcdn.quark.cn/$matchUrl",
                 "hash": {
                     "mode": "download"
                 }

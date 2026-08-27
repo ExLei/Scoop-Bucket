@@ -167,6 +167,7 @@
             "$manifest = winget show --id 123.123pan --source winget --accept-source-agreements 2>$null",
             "$version = ($manifest | Select-String '^Version:').Line.Trim() -replace '^Version:\\s*'",
             "$url = ($manifest | Select-String 'Installer Url:').Line.Trim() -replace '^Installer\\s*Url:\\s*'",
+            "$url = $url -replace '^https?://[^/]+/',''",
             "return \"$version=====$url\""
         ],
         "regex": "(.*)=====(?<url>.*)"
@@ -174,7 +175,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchUrl#/dl.7z",
+                "url": "https://app.123957.com/$matchUrl#/dl.7z",
                 "hash": {
                     "mode": "download"
                 }

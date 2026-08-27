@@ -48,6 +48,7 @@
             "$version = $latest.tag_name -replace '^v'",
             "# 取 .zip 资产，兼容预发行版 -Package.zip 与正式版 -Free.zip 两种命名",
             "$url = ($latest.assets | Where-Object { $_.name -like '*.zip' } | Select-Object -First 1).browser_download_url",
+            "$url = $url.Split('/')[-2,-1] -join '/'",
             "Write-Output \"$version|$url\""
         ],
         "regex": "([^|]+)\\|([^|]+)"
@@ -55,7 +56,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$match2"
+                "url": "https://github.com/OpenStarlight/StarlightGUI/releases/download/$match2"
             }
         }
     }
