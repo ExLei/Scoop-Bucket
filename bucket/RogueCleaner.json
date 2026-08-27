@@ -37,14 +37,15 @@
             "$release = $releases | Where-Object { -not $_.draft } | Select-Object -First 1",
             "$version = $release.tag_name -replace '^v'",
             "$exe = $release.assets | Where-Object { $_.name -like '*.exe' } | Select-Object -First 1",
-            "Write-Output \"$version|$($exe.browser_download_url)\""
+            "# 输出 版本|releases下载路径（tag/资产名），autoupdate 与固定前缀拼接（纯 $match 变量不符合 schema 的 uri 格式校验）",
+            "Write-Output \"$version|$($exe.browser_download_url.Split('/')[-2,-1] -join '/')\""
         ],
         "regex": "([^|]+)\\|([^|]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$match2#/RogueCleaner.exe"
+                "url": "https://github.com/aakk007/RogueCleaner/releases/download/$match2#/RogueCleaner.exe"
             }
         }
     }
