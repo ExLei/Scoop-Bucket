@@ -1,0 +1,51 @@
+{
+    "version": "2.0.16",
+    "description": "流氓软件克星 RogueCleaner - 扫描和清理 Windows 右键菜单、自启动、计划任务、服务、浏览器插件和文件关联残留的小工具 | A tool that finds and cleans up Windows context menu, startup, scheduled task, service, browser extension and file association leftovers",
+    "homepage": "https://github.com/aakk007/RogueCleaner",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/aakk007/RogueCleaner/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/aakk007/RogueCleaner/releases/download/v2.0.16/RogueCleaner-v2.0.16-20260813-085854.exe#/RogueCleaner.exe",
+            "hash": "e57b9c2eb085bf6201b32ca7c2692e7e313ac3d44a97d42866090045ee5b7e52"
+        }
+    },
+    "pre_install": [
+        "# 预创建数据目录，确保 persist 将其视为目录而非文件（程序会在 exe 同目录创建「流氓软件克星数据」）",
+        "if (!(Test-Path \"$dir\\流氓软件克星数据\")) { New-Item -ItemType Directory -Force -Path \"$dir\\流氓软件克星数据\" | Out-Null }"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name RogueCleaner -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
+    "shortcuts": [
+        [
+            "RogueCleaner.exe",
+            "..\\流氓软件克星"
+        ]
+    ],
+    "persist": "流氓软件克星数据",
+    "checkver": {
+        "script": [
+            "$releases = Invoke-RestMethod 'https://api.github.com/repos/aakk007/RogueCleaner/releases'",
+            "# 跳过草稿，取最新发布（资产名含构建时间戳，无法用版本号直接构造 URL）",
+            "$release = $releases | Where-Object { -not $_.draft } | Select-Object -First 1",
+            "$version = $release.tag_name -replace '^v'",
+            "$exe = $release.assets | Where-Object { $_.name -like '*.exe' } | Select-Object -First 1",
+            "Write-Output \"$version|$($exe.browser_download_url)\""
+        ],
+        "regex": "([^|]+)\\|([^|]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$match2#/RogueCleaner.exe"
+            }
+        }
+    }
+}

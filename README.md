@@ -55,6 +55,7 @@ scoop install exlei/{软件包ID}
 | HMCL | HMCL - 多功能、跨平台的 Minecraft 启动器 | `persist\data` |
 | PCL2-CE | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |
 | 图吧工具箱 | DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具 | `persist\Config.ini`, `persist\skin\user` |
+| 流氓软件克星 | 扫描和清理 Windows 流氓右键菜单、自启动、计划任务、服务、浏览器插件和文件关联残留的小工具 | `persist\流氓软件克星数据` |
 
 ## 手动触发更新
 
