@@ -1,0 +1,75 @@
+{
+    "version": "1.5.1",
+    "description": "ExHyperV - Hyper-V 图形化管理工具，支持 GPU 分区、PCIe 直通和虚拟机高级配置 | A graphical Hyper-V management tool",
+    "homepage": "https://github.com/Justsenger/ExHyperV",
+    "license": "GPL-3.0-only",
+    "notes": [
+        "此清单使用需要 .NET 8 Desktop Runtime 的单文件便携版。",
+        "安装前检测全局 dotnet8-sdk；缺失时自动执行 scoop install versions/dotnet8-sdk -g（需要管理员权限）。",
+        "请先启用 Windows Hyper-V，再以管理员身份运行 ExHyperV。",
+        "配置保存在 %LOCALAPPDATA%\\ExHyperV\\Config.xml，Scoop 更新或卸载会保留该目录。",
+        "1.5.1 起不再读取程序目录中的旧版 Config.xml。"
+    ],
+    "suggest": {
+        ".NET 8 SDK": "versions/dotnet8-sdk"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Justsenger/ExHyperV/releases/download/V1.5.1/ExHyperV_V1.5.1_x64.exe#/ExHyperV.exe",
+            "hash": "0524c61e4299207c9ebb39314e4fbff151c3d303e616896819eed4826536ea44"
+        },
+        "arm64": {
+            "url": "https://github.com/Justsenger/ExHyperV/releases/download/V1.5.1/ExHyperV_V1.5.1_arm64.exe#/ExHyperV.exe",
+            "hash": "b82af91a393bd6b36b5328aab38bb99221388b483c62811dea9c5ece95425d72"
+        }
+    },
+    "pre_install": [
+        "# 只检测全局 .NET 8 SDK，避免被用户级安装或其他 .NET 版本误判。",
+        "if (!(installed 'dotnet8-sdk' $true)) {",
+        "    if (!(is_admin)) {",
+        "        abort '请在管理员 PowerShell 中运行 scoop bucket add versions（尚未添加时），再运行 scoop install versions/dotnet8-sdk -g，然后重试安装 ExHyperV。'",
+        "    }",
+        "    if ('versions' -notin (Get-LocalBucket)) {",
+        "        scoop bucket add versions",
+        "        if ($LASTEXITCODE -ne 0 -or 'versions' -notin (Get-LocalBucket)) { abort '添加 versions bucket 失败，请检查网络后重试。' }",
+        "    }",
+        "    scoop install versions/dotnet8-sdk -g",
+        "    if ($LASTEXITCODE -ne 0 -or !(installed 'dotnet8-sdk' $true)) { abort '全局 .NET 8 SDK 安装失败，请运行 scoop install versions/dotnet8-sdk -g 后重试。' }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name ExHyperV -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\ExHyperV-虚拟机管理.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "ExHyperV.exe",
+            "..\\ExHyperV-虚拟机管理"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/Justsenger/ExHyperV",
+        "jp": "$.tag_name",
+        "regex": "(?i)(?<tag>v?(?<version>[\\d.]+))"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Justsenger/ExHyperV/releases/download/$matchTag/ExHyperV_$matchTag_x64.exe#/ExHyperV.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/Justsenger/ExHyperV/releases/download/$matchTag/ExHyperV_$matchTag_arm64.exe#/ExHyperV.exe"
+            }
+        }
+    }
+}

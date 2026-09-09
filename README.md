@@ -37,6 +37,7 @@ scoop install exlei/{软件包ID}
 | Bili23-Downloader | 开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类 | `persist\data` |
 | BootICE | BootICE - USB启动盘制作/引导维护工具 MBR/PBR编辑及BCD配置管理 | - |
 | Context Menu Manager Plus | Context Menu Manager Plus - Windows 右键菜单管理工具，支持新菜单监控、传统菜单管理、Win11 新菜单管理、Shell Extension 探测等功能 | `%ProgramData%\ContextMenuMgr\` |
+| ExHyperV 1.5.1 | Hyper-V 图形化管理工具，支持 GPU 分区、PCIe 直通和虚拟机高级配置；安装：`scoop install exlei/ExHyperV` | `%LOCALAPPDATA%\ExHyperV\Config.xml` |
 | mpv-lazy | 全格式视频播放懒人包，基于 mpv 播放器集成大量配置和脚本 | - |
 | Motrix Next | 全功能下载管理器重构版，支持 HTTP/FTP/SFTP/BitTorrent/Magnet 等多种协议 | `persist\LocalAppData` |
 | HEU KMS Activator | KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活 | - |
@@ -56,6 +57,12 @@ scoop install exlei/{软件包ID}
 | PCL2-CE | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |
 | 图吧工具箱 | DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具 | `persist\Config.ini`, `persist\skin\user` |
 | 流氓软件克星 | 扫描和清理 Windows 流氓右键菜单、自启动、计划任务、服务、浏览器插件和文件关联残留的小工具 | `persist\流氓软件克星数据` |
+
+### ExHyperV 依赖
+
+ExHyperV 使用 1.5.1 单文件便携版，需要 .NET 8 Desktop Runtime。本清单通过全局安装 .NET 8 SDK 提供运行环境：已安装全局 `dotnet8-sdk` 时跳过；缺失时需要管理员权限，并仅在尚未添加时添加 `versions` bucket，再执行 `scoop install versions/dotnet8-sdk -g`。用户级 SDK 或其他 .NET 版本不会被误判为已满足全局依赖。
+
+请先启用 Windows Hyper-V，再以管理员身份启动应用。1.5.1 起配置改存于 `%LOCALAPPDATA%\ExHyperV\Config.xml`，不再读取程序目录中的旧配置；更新或卸载会保留该数据目录。
 
 ## 手动触发更新
 
