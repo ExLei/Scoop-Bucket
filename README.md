@@ -39,7 +39,7 @@ scoop install exlei/{软件包ID}
 | Context Menu Manager Plus | Context Menu Manager Plus - Windows 右键菜单管理工具，支持新菜单监控、传统菜单管理、Win11 新菜单管理、Shell Extension 探测等功能 | `%ProgramData%\ContextMenuMgr\` |
 | ExHyperV 1.5.1 | Hyper-V 图形化管理工具，支持 GPU 分区、PCIe 直通和虚拟机高级配置；安装：`scoop install exlei/ExHyperV` | `%LOCALAPPDATA%\ExHyperV\Config.xml` |
 | mpv-lazy | 全格式视频播放懒人包，基于 mpv 播放器集成大量配置和脚本 | - |
-| Motrix Next | 全功能下载管理器重构版，支持 HTTP/FTP/SFTP/BitTorrent/Magnet 等多种协议 | `persist\LocalAppData` |
+| Rayburst | 全功能下载管理器（原 Motrix Next），支持 HTTP/FTP/SFTP/BitTorrent/Magnet 及 HLS/DASH 流媒体下载 | `persist\RoamingData`, `persist\LocalData` |
 | HEU KMS Activator | KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活 | - |
 | ZedG | Zed Editor（汉化版），基于 Rust 的高性能代码编辑器本地化版本 | `persist\appdata`, `persist\local` |
 | Starlight GUI | 基于 C++/WinRT WinUI3 的 Windows 内核级工具箱，集成任务管理、文件管理、系统监控等功能 | `persist\StarlightGUI.json` |

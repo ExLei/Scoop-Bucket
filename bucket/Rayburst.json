@@ -1,0 +1,102 @@
+{
+    "version": "4.0.0",
+    "description": "Rayburst（原 Motrix Next）- 全功能下载管理器，支持 HTTP/FTP/SFTP/BitTorrent/Magnet 及 HLS/DASH 流媒体下载 | A full-featured download manager rebuilt from the ground up",
+    "homepage": "https://rayburst.pages.dev/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/AnInsomniacy/rayburst/releases/download/v4.0.0/Rayburst_4.0.0_x64-setup.exe#/dl.7z",
+            "hash": "6025330aa6e36b65af9c71930a3a341feeeff621e9364bc6c69046627f787352"
+        },
+        "arm64": {
+            "url": "https://github.com/AnInsomniacy/rayburst/releases/download/v4.0.0/Rayburst_4.0.0_arm64-setup.exe#/dl.7z",
+            "hash": "c47295dd9609238e1e822475d7e8030ce5a5c8783556eb4bd486da9b15f03c2e"
+        }
+    },
+    "notes": [
+        "上游已将 Motrix Next 更名为 Rayburst，旧版设置/任务/历史不会导入：建议先 scoop uninstall motrix-next 再安装本清单。",
+        "浏览器集成需另装 Rayburst Connect 扩展（Chrome/Edge/Firefox），并在应用内填写扩展 API 端口与密钥。",
+        "",
+        "数据持久化: 应用数据通过目录联接 (junction) 重定向到 Scoop persist 目录。",
+        "卸载时不会残留数据，重新安装自动恢复。"
+    ],
+    "pre_install": [
+        "# 将应用数据目录通过 junction 重定向到 persist（Tauri 的 Roaming/Local 两个数据目录）",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\RoamingData\", \"$env:APPDATA\\dev.aninsomniacy.rayburst\"),",
+        "    @(\"$persist_dir\\LocalData\", \"$env:LOCALAPPDATA\\dev.aninsomniacy.rayburst\")",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force | Out-Null }",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            [System.IO.Directory]::Delete($targetDir)",
+        "        } else {",
+        "            Get-ChildItem $targetDir | Move-Item -Destination $persistDir -Force",
+        "            Remove-Item $targetDir -Force -Recurse",
+        "        }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse -ErrorAction Ignore | Out-Null",
+        "# 重建 junction（更新流程中 pre_uninstall 会删除，persist 数据保留）",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\RoamingData\", \"$env:APPDATA\\dev.aninsomniacy.rayburst\"),",
+        "    @(\"$persist_dir\\LocalData\", \"$env:LOCALAPPDATA\\dev.aninsomniacy.rayburst\")",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    if (!(Test-Path $persistDir)) { New-Item -ItemType Directory $persistDir -Force | Out-Null }",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { [System.IO.Directory]::Delete($targetDir) }",
+        "    }",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接，不穿透到目标目录",
+        "@(\"$env:APPDATA\\dev.aninsomniacy.rayburst\", \"$env:LOCALAPPDATA\\dev.aninsomniacy.rayburst\") | ForEach-Object {",
+        "    if ((Test-Path $_) -and ((Get-Item $_ -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "        [System.IO.Directory]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 'rayburst', 'aria2-next' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Rayburst.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "rayburst.exe",
+            "..\\Rayburst"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/AnInsomniacy/rayburst"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/AnInsomniacy/rayburst/releases/download/v$version/Rayburst_$version_x64-setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/AnInsomniacy/rayburst/releases/download/v$version/Rayburst_$version_arm64-setup.exe#/dl.7z"
+            }
+        }
+    }
+}
