@@ -58,8 +58,8 @@
         ]
     ],
     "checkver": {
-        "github": "https://api.github.com/repos/Justsenger/ExHyperV",
-        "jp": "$.tag_name",
+        "github": "https://api.github.com/repos/Justsenger/ExHyperV/releases",
+        "jp": "$[?(@.tag_name =~ /^v?[\\d.]+$/i)].tag_name",
         "regex": "(?i)(?<tag>v?(?<version>[\\d.]+))"
     },
     "autoupdate": {
