@@ -44,8 +44,13 @@
     ],
     "persist": "portable_data",
     "checkver": {
-        "url": "https://github.com/zerx-lab/FluxDown/releases",
-        "regex": "releases/tag/v([\\d.]+-rc\\.\\d+)"
+        "script": [
+            "$releases = Invoke-RestMethod 'https://api.github.com/repos/zerx-lab/FluxDown/releases?per_page=30'",
+            "# 只取携带桌面便携版资产的预发行版（部分 rc 仅发布移动端/CLI 资产，取到会导致自动更新 404）",
+            "$release = $releases | Where-Object { $_.prerelease -and ($_.assets.name -like '*-windows-x64-portable.zip') } | Select-Object -First 1",
+            "if ($release) { Write-Output ($release.tag_name -replace '^v') }"
+        ],
+        "regex": "([\\d.]+-rc\\.\\d+)"
     },
     "autoupdate": {
         "architecture": {
