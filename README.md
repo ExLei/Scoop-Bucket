@@ -24,6 +24,7 @@ scoop install exlei/{软件包ID}
 
 | 软件 | 描述 | 数据目录 |
 |------|------|---------|
+| disktree | 基于 Rust + GPUI 的磁盘空间可视化工具，以树状图展示目录占用、标记可回收内容并安全删除（支持 x64/arm64）| - |
 | QQ | QQ NT 版本，腾讯的一款聊天通讯工具 | `persist\QQ_Data` |
 | 微信 | 微信，腾讯的一款聊天通讯工具 | `persist\xwechat_files` |
 | Codex++ | Codex++ - OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理工具，支持供应商切换、协议转换、会话管理与界面增强 | `%APPDATA%\Codex++` |
