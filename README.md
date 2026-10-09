@@ -58,6 +58,7 @@ scoop install exlei/{软件包ID}
 | PCL2-CE | PCL 社区版 - Minecraft Java 版启动器，基于 PCL 开源代码二次开发的社区版本 | `persist\data` |
 | 图吧工具箱 | DIY 爱好者的硬件检测工具合集，集成 CPU/显卡/内存/硬盘检测、烤机、信息查询等 80+ 工具 | `persist\Config.ini`, `persist\skin\user` |
 | 流氓软件克星 | 扫描和清理 Windows 流氓右键菜单、自启动、计划任务、服务、浏览器插件和文件关联残留的小工具 | `persist\流氓软件克星数据` |
+| PDF24 Creator | 免费离线的 PDF 工具箱，集成合并、拆分、压缩、转换、OCR、阅读器等工具（PDF 虚拟打印机需管理员权限安装） | `persist\tessdata` |
 
 ### ExHyperV 依赖
 

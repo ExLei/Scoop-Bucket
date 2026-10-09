@@ -1,0 +1,59 @@
+{
+    "version": "11.31.1",
+    "description": "PDF24 Creator - 免费离线的 PDF 工具箱，集成合并、拆分、压缩、转换、OCR、阅读器等工具（PDF 虚拟打印机需管理员权限安装）| Offline PDF toolbox with merge, split, compress, convert, OCR and reader tools",
+    "homepage": "https://tools.pdf24.org/creator",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.pdf24.org/en/terms-of-use"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.pdf24.org/pdf24-creator-11.31.1-x64.exe",
+            "hash": "11352bace27c3935e503092513cfffcc183252a871e564f8b8b8583b05dc98f2"
+        },
+        "arm64": {
+            "url": "https://download.pdf24.org/pdf24-creator-11.31.1-arm64.exe",
+            "hash": "867727acd9131c5a266c8a81726a737b0c4dea05038b93db2fbe9feee4b86496"
+        }
+    },
+    "installer": {
+        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removal"
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name 'pdf24', 'pdf24-Toolbox', 'pdf24-Creator', 'pdf24-Reader', 'pdf24-Launcher', 'pdf24-Ocr', 'pdf24-Compress', 'pdf24-DocTool', 'pdf24-Assistant', 'pdf24-Fax', 'pdf24-Settings', 'pdf24-Updater', 'pdf24-wpp' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
+    "shortcuts": [
+        [
+            "pdf24-Toolbox.exe",
+            "..\\PDF24-工具箱"
+        ]
+    ],
+    "persist": "tesseract\\tessdata",
+    "notes": "本安装不注册 PDF 虚拟打印机，可在 PDF24 设置 (pdf24-Settings.exe) 中添加 PDF 打印机，该操作需要管理员权限。",
+    "checkver": {
+        "url": "https://creator.pdf24.org/listVersions.php",
+        "regex": "<td>([\\d.]+)</td>\\s*<td>x64</td>\\s*<td>EXE</td>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.pdf24.org/pdf24-creator-$version-x64.exe",
+                "hash": {
+                    "url": "https://creator.pdf24.org/listVersions.php",
+                    "regex": "<td>$version</td>\\s*<td>x64</td>\\s*<td>EXE</td>\\s*<td><a href=\"[^\"]*\">[^<]*</a></td>\\s*<td>([0-9A-F]{64})</td>"
+                }
+            },
+            "arm64": {
+                "url": "https://download.pdf24.org/pdf24-creator-$version-arm64.exe",
+                "hash": {
+                    "url": "https://creator.pdf24.org/listVersions.php",
+                    "regex": "<td>$version</td>\\s*<td>arm64</td>\\s*<td>EXE</td>\\s*<td><a href=\"[^\"]*\">[^<]*</a></td>\\s*<td>([0-9A-F]{64})</td>"
+                }
+            }
+        }
+    }
+}
