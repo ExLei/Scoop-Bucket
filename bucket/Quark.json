@@ -14,7 +14,7 @@
     },
     "installer": {
         "script": [
-            "Expand-InnoArchive \"$dir\\$fname\" \"$dir\" -Removable",
+            "Expand-InnoArchive \"$dir\\$fname\" \"$dir\" -Removal",
             "Move-Item -Path \"$dir\\{code_GetAppExeDestName}\" -Destination \"$dir\\quark.exe\" -Force",
             "Move-Item -Path \"$dir\\{code_GetAppProxyExeDestName}\" -Destination \"$dir\\quark_proxy.exe\" -Force",
             "",

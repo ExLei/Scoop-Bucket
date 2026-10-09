@@ -21,7 +21,7 @@
         "Remove-Item \"$dir\\*.pdb\", \"$dir\\*.sig\", \"$dir\\install_script.iss\" -Force -ErrorAction SilentlyContinue"
     ],
     "installer": {
-        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removable"
+        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removal"
     },
     "uninstaller": {
         "script": [

@@ -38,7 +38,7 @@
       New-Item -ItemType Directory -Force -Path "$persist_dir\data" | Out-Null
   }
   ```
-- **InnoSetup 解包** —— 下载的安装包为 InnoSetup 格式时，使用 `installer.script` 调用 `Expand-InnoArchive "$dir\$fname" -Removable` 解包。
+- **InnoSetup 解包** —— 下载的安装包为 InnoSetup 格式时，使用 `installer.script` 调用 `Expand-InnoArchive "$dir\$fname" -Removal` 解包。开关名必须是 `-Removal`：Scoop 的 `Expand-InnoArchive` 只声明了 `-Removal`，误写成 `-Removable` 时会落入 `ValueFromRemainingArguments` 并被透传给 innounp，而 innounp 静默忽略未知选项——解包照常成功，但安装包不会删除、残留在 `$dir`（例如 390MB 的安装包会让目录体积翻倍）。
 - **#/dl.7z 重命名** —— 下载 exe 文件但需作为 7z 解压时，URL 末尾加 `#/dl.7z` fragment 触发 Scoop 重命名后自动解压。
 - **两阶段解压** —— NSIS 安装包内嵌 `install.7z` 时，先解压外层 NSIS，再对内部 `install.7z` 调用 `Expand-7zipArchive` 二次解压。
 - **单文件 persist 占位** —— 对单个文件（而非文件夹）做 `persist` 时，必须在 `pre_install` 中创建空文件占位，否则 Scoop 会将 persist 链接创建为**文件夹链接**导致应用无法读写配置。参考 `bucket\zerx.FluxDown.json`。

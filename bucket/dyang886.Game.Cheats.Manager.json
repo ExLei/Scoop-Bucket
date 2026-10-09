@@ -31,7 +31,7 @@
         "New-Item -ItemType Junction -Path $junction -Target \"$persist_dir\\data\" | Out-Null"
     ],
     "installer": {
-        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removable"
+        "script": "Expand-InnoArchive \"$dir\\$fname\" -Removal"
     },
     "post_install": [
         "# 重建 junction（更新后 Scoop 清理旧版本但 persist 数据保留）",
