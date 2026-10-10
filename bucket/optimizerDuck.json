@@ -1,0 +1,84 @@
+{
+    "version": "2.29.0",
+    "description": "optimizerDuck - 开源 Windows 优化工具，集成系统优化、隐私调整与内置管理工具（启动项、计划任务、磁盘清理、预装应用卸载），所有更改支持一键还原 | A free, open-source Windows optimization tool focused on performance, privacy, and simplicity",
+    "homepage": "https://github.com/itsfatduck/optimizerDuck",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/itsfatduck/optimizerDuck/blob/master/LICENSE"
+    },
+    "notes": [
+        "需要管理员权限运行：应用清单声明 requireAdministrator，启动时会弹出 UAC。",
+        "数据目录（appsettings.json、Revert 还原记录、History、日志）已持久化：persist\\local（映射 %LOCALAPPDATA%\\optimizerDuck），更新或重装时保留。",
+        "官方发行版未做代码签名，首次运行时 Windows SmartScreen 可能提示，需选择“仍要运行”。"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/itsfatduck/optimizerDuck/releases/download/v2.29.0/optimizerDuck-Windows-x64-2.29.0.exe#/optimizerDuck.exe",
+            "hash": "d343440168e93c73c8be2315755c9ab8fa4f20f9209ce2b8338f8c8fc97fab8f"
+        },
+        "arm64": {
+            "url": "https://github.com/itsfatduck/optimizerDuck/releases/download/v2.29.0/optimizerDuck-Windows-arm64-2.29.0.exe#/optimizerDuck.exe",
+            "hash": "ffa502e84abdd5622295020df15d6d05fc4f2f58e5d3ca07569f1e703094aa5e"
+        }
+    },
+    "post_install": [
+        "# 将应用数据目录映射到 persist（%LOCALAPPDATA%\\optimizerDuck → $persist_dir\\local）",
+        "$persistDir = \"$persist_dir\\local\"",
+        "$targetDir = \"$env:LOCALAPPDATA\\optimizerDuck\"",
+        "# 确保 persist 目录存在（必须在迁移前创建，Move-Item 需要目标目录存在）",
+        "New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "if (Test-Path $targetDir) {",
+        "    $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "        [System.IO.Directory]::Delete($targetDir)",
+        "    } else {",
+        "        Get-ChildItem $targetDir | Move-Item -Destination $persistDir -Force",
+        "        Remove-Item $targetDir -Force -Recurse -ErrorAction SilentlyContinue",
+        "    }",
+        "}",
+        "New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null"
+    ],
+    "pre_uninstall": [
+        "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
+        "$targetDir = \"$env:LOCALAPPDATA\\optimizerDuck\"",
+        "if ((Test-Path $targetDir) -and ((Get-Item $targetDir -Force -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "    [System.IO.Directory]::Delete($targetDir)",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name optimizerDuck -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\optimizerDuck.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "bin": "optimizerDuck.exe",
+    "shortcuts": [
+        [
+            "optimizerDuck.exe",
+            "..\\optimizerDuck"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/itsfatduck/optimizerDuck"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/itsfatduck/optimizerDuck/releases/download/v$version/optimizerDuck-Windows-x64-$version.exe#/optimizerDuck.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/itsfatduck/optimizerDuck/releases/download/v$version/optimizerDuck-Windows-arm64-$version.exe#/optimizerDuck.exe"
+            }
+        }
+    }
+}
