@@ -1,0 +1,70 @@
+{
+    "version": "0.12.16",
+    "description": "Readest - 开源电子书阅读器，支持 EPUB/MOBI/AZW3/FB2/CBZ/PDF/TXT 等格式（便携版） | A modern, feature-rich ebook reader (Portable)",
+    "homepage": "https://readest.com/",
+    "license": {
+        "identifier": "AGPL-3.0-or-later",
+        "url": "https://github.com/readest/readest/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/readest/readest/releases/download/v0.12.16/Readest_0.12.16_x64-portable.exe#/Readest.exe",
+            "hash": "683a620d4ee883c2d15c500cbe0ca82e42900510276e557df33289e3b7265f74"
+        },
+        "arm64": {
+            "url": "https://github.com/readest/readest/releases/download/v0.12.16/Readest_0.12.16_arm64-portable.exe#/Readest.exe",
+            "hash": "e1135dcf8f3c1ebaed9b3e8e0b8173a245c59efa47e7ec488b4cc35001f06326"
+        }
+    },
+    "pre_install": [
+        "# 便携版数据根目录即程序目录：settings.json 属单文件 persist，必须在 pre_install 创建占位，否则 Scoop 会将其建成目录联接导致应用读写失败",
+        "if (!(Test-Path \"$persist_dir\\settings.json\")) {",
+        "    Set-Content -Path \"$dir\\settings.json\" -Value '{\"autoCheckUpdates\":false}' -Encoding ASCII",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name Readest -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Readest.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Readest.exe",
+            "..\\Readest"
+        ]
+    ],
+    "persist": [
+        "Readest",
+        "settings.json"
+    ],
+    "checkver": {
+        "github": "https://github.com/readest/readest"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/readest/readest/releases/download/v$version/Readest_$version_x64-portable.exe#/Readest.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/readest/readest/releases/download/v$version/Readest_$version_arm64-portable.exe#/Readest.exe"
+            }
+        }
+    },
+    "notes": [
+        "数据持久化说明:",
+        "  - 便携版数据根目录即程序目录，Readest/ 数据目录与 settings.json 配置文件已由 Scoop 持久化到 persist，更新版本后书库、阅读进度、笔记与设置均自动保留",
+        "  - 首次安装写入 {\"autoCheckUpdates\":false}，应用内自动更新已关闭，升级请使用 scoop update readest",
+        "  - 窗口状态、LocalSend 设备标识与 WebView2 缓存存放于 %APPDATA%\\com.bilingify.readest 与 %LOCALAPPDATA%\\com.bilingify.readest，位于版本目录之外，更新时无需处理"
+    ]
+}

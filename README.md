@@ -60,6 +60,7 @@ scoop install exlei/{软件包ID}
 | 流氓软件克星 | 扫描和清理 Windows 流氓右键菜单、自启动、计划任务、服务、浏览器插件和文件关联残留的小工具 | `persist\流氓软件克星数据` |
 | PDF24 Creator | 免费离线的 PDF 工具箱，集成合并、拆分、压缩、转换、OCR、阅读器等工具（PDF 虚拟打印机需管理员权限安装） | `persist\tessdata` |
 | optimizerDuck | 开源 Windows 优化工具，集成系统优化、隐私调整与内置管理工具（启动项、计划任务、磁盘清理、预装应用卸载），所有更改支持一键还原（支持 x64/arm64，需管理员权限） | `persist\local` |
+| Readest | 开源电子书阅读器，支持 EPUB/MOBI/AZW3/FB2/CBZ/PDF/TXT 等格式，内置双栏对照、TTS、翻译与多端同步（便携版，支持 x64/arm64） | `persist\Readest`, `persist\settings.json` |
 
 ### ExHyperV 依赖
 
