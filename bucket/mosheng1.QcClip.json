@@ -1,0 +1,70 @@
+{
+    "version": "1.0.0-beta.1",
+    "description": "QcClip - 纯 Rust + GPUI 原生渲染的高性能剪贴板管理工具 (便携版，Beta 预发行版) | A high-performance clipboard manager built with pure Rust and GPUI (Portable, Beta)",
+    "homepage": "https://github.com/mosheng1/QcClip",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/mosheng1/QcClip/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.1/QcClip_1.0.0-beta.1_x64-portable.zip",
+            "hash": "d3d42fbce15876ee7704739c8328cabefb5f516e3a5c97573701a825156cd2de",
+            "extract_dir": "QcClip"
+        },
+        "arm64": {
+            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.1/QcClip_1.0.0-beta.1_arm64-portable.zip",
+            "hash": "5de8ebbf8fac2769911d52f7a9776273fdf1646467f966f425290fecb91f5b61",
+            "extract_dir": "QcClip"
+        }
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name QcClip -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\QcClip.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "QcClip.exe",
+            "..\\QcClip"
+        ]
+    ],
+    "persist": "QcClipData",
+    "checkver": {
+        "script": [
+            "$releases = Invoke-RestMethod 'https://api.github.com/repos/mosheng1/QcClip/releases?per_page=30'",
+            "# 跳过草稿，只取携带 Windows 便携版资产的发布（上游当前仅发布预发行版，正式版发布后自动跟进）",
+            "$release = $releases | Where-Object { (-not $_.draft) -and ($_.assets.name -like '*_x64-portable.zip') } | Select-Object -First 1",
+            "if ($release) { Write-Output ($release.tag_name -replace '^v') }"
+        ],
+        "regex": "([\\w.+-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mosheng1/QcClip/releases/download/v$version/QcClip_$version_x64-portable.zip",
+                "extract_dir": "QcClip"
+            },
+            "arm64": {
+                "url": "https://github.com/mosheng1/QcClip/releases/download/v$version/QcClip_$version_arm64-portable.zip",
+                "extract_dir": "QcClip"
+            }
+        }
+    },
+    "notes": [
+        "当前为 Beta 预发行版（1.0.0-beta.1），功能可能尚未完成或不稳定。",
+        "",
+        "数据持久化: 压缩包内置 QcClip.portable 便携标记，应用以便携模式运行，配置/数据库/图片库/日志统一存储在 QcClipData 目录，已持久化到 persist\\QcClipData，更新版本时不会丢失。"
+    ]
+}
