@@ -85,7 +85,15 @@
 
 ## CI
 
-- **Update:** UTC 00:00/06:00/12:00/18:00，`SKIP_UPDATED: '1'`，可手动触发。
+- **Update:** UTC 00:00/06:00/12:00/18:00，`SKIP_UPDATED: '1'`，可手动触发（`app` 输入可只跑指定清单）。
+- **Update 流水线**（`.github/workflows/excavator.yml` + `bin/update-bucket.ps1`）——分层：L0 预检队列 → L1 逐清单子进程执行 `checkver.ps1 -Update -ThrowError`（超时 + 日志落盘）→ L2 校验/提交/推送 → L3 摘要/注解/issue 上报。约定：
+  - **一个清单 = 一个事务**：更新失败或提交前校验不通过，一律还原该文件并跳过，绝不写入半成品；其余清单照常更新。已成功的更新逐个提交并立即推送，进程被打断也不丢。
+  - **失败判定三信号**：子进程退出码、checkver 的问题输出（`couldn't`/`ERROR`/`is not valid`）、stderr 非空。上游 checkver 存在大量「打印错误后 continue」的路径（退出码仍为 0），只看退出码会漏报。
+  - **退出码语义**：部分清单失败仍为 0（红/绿只代表流水线本身）；全部清单失败或最终推送失败才是 1。
+  - **不依赖 `ScoopInstaller/GithubActions` 与 `auto-pr.ps1`**：它们只能整批执行，无法逐清单隔离。工作流只 clone Scoop 核心（`bin/checkver.ps1` + `lib/*`），不使用 `hub`、不自动安装 `hub`。
+  - **失败成因先归类**：上游「发布后资产还在上传」造成的 404 属于瞬时故障，重跑即可；只有连续多个周期都失败的清单才需要改 `checkver`/`autoupdate`。
+  - **报告**：Actions 摘要 + `::warning/::notice` 注解 + 滚动 issue「自动更新失败清单」（有失败则创建/更新，全部正常则关闭）。日志与备份在 `.update-logs/`（已 gitignore），作为 artifact 上传。
+  - 未声明 `checkver` 的清单（如 BootICE）按设计跳过，不算失败。
 - **Lint + Test:** 双矩阵（pwsh + powershell），本地等价：`pwsh bin/lint.ps1` / `powershell bin/lint.ps1` / `pwsh bin/test.ps1` / `powershell bin/test.ps1`
 
 ## 约束

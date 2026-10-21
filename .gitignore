@@ -45,6 +45,9 @@ temp/
 *.log
 .agents/skills/
 
+# Excavator 更新流水线的日志与备份（bin/update-bucket.ps1 输出）
+.update-logs/
+
 # Secrets & Credentials
 .env
 .env.*

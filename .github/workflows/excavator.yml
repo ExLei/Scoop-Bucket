@@ -2,6 +2,11 @@ name: Excavator
 
 on:
   workflow_dispatch:
+    inputs:
+      app:
+        description: '只更新名称匹配的清单（支持通配符，留空表示全部）'
+        required: false
+        type: string
   schedule:
     - cron: '0 0,6,12,18 * * *'
 
@@ -11,17 +16,50 @@ concurrency:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
-  excavate:
+  update:
     name: Excavator
     runs-on: windows-latest
+    # 兜底上限：单个清单的超时由 bin/update-bucket.ps1 -TimeoutSeconds 控制；
+    # 即使这里被强杀，此前每个清单的提交都已单独推送，不会丢已完成的更新。
+    timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout Bucket
+        uses: actions/checkout@v5
+        with:
+          # 推送前需要 rebase 远端提交，浅克隆无法 rebase
+          fetch-depth: 0
 
-      - name: Excavator
-        uses: ScoopInstaller/GithubActions@main
+      - name: 准备 Scoop 核心
+        shell: pwsh
+        run: |
+          # 更新流水线只依赖 Scoop 核心的 bin/checkver.ps1 与 lib/*，按 <SCOOP>\apps\scoop\current 布局放置
+          $scoopRoot = Join-Path $env:RUNNER_TEMP 'scoop'
+          $coreDir = Join-Path $scoopRoot 'apps\scoop\current'
+          New-Item -ItemType Directory -Force -Path $scoopRoot | Out-Null
+          git clone --depth 1 --branch master --quiet https://github.com/ScoopInstaller/Scoop $coreDir
+          "SCOOP=$scoopRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "SCOOP_HOME=$coreDir" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: 更新清单
+        shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APP: ${{ inputs.app }}
           SKIP_UPDATED: '1'
-          THROW_ERROR: '1'
+          # checkver / autoupdate 直接调用 GitHub API，缺 token 会很快被限流
+          SCOOP_GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./bin/update-bucket.ps1 -App $env:APP
+
+      - name: 上传更新日志
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: update-logs
+          path: .update-logs
+          # .update-logs 是点前缀目录，上传动作默认跳过隐藏文件，必须显式打开
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 14
