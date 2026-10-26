@@ -1,5 +1,5 @@
 {
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "面向 Windows 的高性能截图、标注、OCR 与桌面贴图工具 (便携版) | A high-performance screenshot, annotation, OCR and pin tool for Windows (Portable)",
     "homepage": "https://github.com/mosheng1/CitePix-feedback",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mosheng1/CitePix-feedback/releases/download/v0.6.0/CitePix-0.6.0-x64.zip",
-            "hash": "60c61cc2805947fb424bac994f978cf217a2227f53f0f45e01677ff15d7e3575"
+            "url": "https://github.com/mosheng1/CitePix-feedback/releases/download/v0.6.1/CitePix-0.6.1-x64.zip",
+            "hash": "2111f85a11fa5b15da0fcf2aa217c66e91d49aafb0f4accc90fa6070d8922ded"
         }
     },
     "uninstaller": {
