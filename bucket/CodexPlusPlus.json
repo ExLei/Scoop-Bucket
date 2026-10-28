@@ -1,12 +1,12 @@
 {
-    "version": "1.12.1",
+    "version": "2.1.0",
     "description": "Codex++ - OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理工具，支持供应商切换、协议转换、会话管理与界面增强 | An external launcher and management tool for the OpenAI Codex / ChatGPT desktop app",
     "homepage": "https://github.com/BigPizzaV3/CodexPlusPlus",
     "license": "AGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/BigPizzaV3/CodexPlusPlus/releases/download/v1.12.1/CodexPlusPlus-1.12.1-windows-x64.zip",
-            "hash": "da914d518fe154d4ad679e8ac96d54c9fc016e91e0ef02e62dceb641b2c0e414"
+            "url": "https://github.com/BigPizzaV3/CodexPlusPlus/releases/download/v2.1.0/CodexPlusPlus-2.1.0-windows-x64.zip",
+            "hash": "de9ef93e405fc177019ead460fac99493d3db2768985f4b364cec3467737cc01"
         }
     },
     "uninstaller": {
