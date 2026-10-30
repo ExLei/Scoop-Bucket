@@ -1,20 +1,23 @@
 {
-    "version": "1.26.2",
-    "description": "Zed Editor (Localized / 汉化版) - 基于 Rust 的高性能代码编辑器汉化版本 | A localized Chinese version of the Zed code editor",
-    "homepage": "https://github.com/x6nux/zed-globalization",
+    "version": "1.26.2-i18n.1",
+    "description": "Zed 编辑器汉化版 —— 基于 LI-NA/zed-i18n 的社区本地化构建，内置简繁中文/日语/韩语等 13 种界面语言 | Localized builds of the Zed code editor",
+    "homepage": "https://github.com/LI-NA/zed-i18n",
     "license": {
         "identifier": "GPL-3.0-only",
-        "url": "https://github.com/x6nux/zed-globalization/blob/main/LICENSE"
+        "url": "https://github.com/LI-NA/zed-i18n/blob/master/LICENSE"
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/x6nux/zed-globalization/releases/download/v1.26.2/zedg-zh-cn-windows-x86_64-v1.26.2.zip",
-            "hash": "60666f0bfd0aba833b2f8fabfa4c1f3f322ca318f0104e542c17c567c8c27e48"
+            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.26.2-i18n.1/Zed-i18n-windows-x86_64.zip",
+            "hash": "b30248b24c428faa17f67cccca9d01673168a04f5317cdad926f0d751bb7e055"
         },
         "arm64": {
-            "url": "https://github.com/x6nux/zed-globalization/releases/download/v1.26.2/zedg-zh-cn-windows-aarch64-v1.26.2.zip",
-            "hash": "16ddb702320d5917e73b04a59ce7a8147ec0b65dc55f2840d7d7485091147691"
+            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.26.2-i18n.1/Zed-i18n-windows-aarch64.zip",
+            "hash": "af2f6875522d355a6a3b7599f3705aa099086ff0506c58b92cdee116eac72a1f"
         }
+    },
+    "env_set": {
+        "ZED_UPDATE_EXPLANATION": "Run 'scoop update Zed-i18n' to update."
     },
     "post_install": [
         "# 将系统数据目录映射到 persist（AppData + LocalAppData）",
@@ -36,7 +39,14 @@
         "        }",
         "    }",
         "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
-        "}"
+        "}",
+        "# 关闭内置自动更新（发布包不含官方更新源，统一由 scoop 管理）",
+        "$cfg = \"$env:APPDATA\\Zed\\global_settings.json\"",
+        "$cfgDir = Split-Path -Parent $cfg",
+        "if (!(Test-Path $cfgDir)) { New-Item -ItemType Directory -Path $cfgDir -Force | Out-Null }",
+        "if ((Test-Path $cfg) -and ((Get-Item $cfg).Length -gt 0)) { $j = Get-Content $cfg -Raw | ConvertFrom-Json } else { $j = [pscustomobject]@{} }",
+        "$j | Add-Member -MemberType NoteProperty -Name auto_update -Value $false -Force",
+        "[System.IO.File]::WriteAllText($cfg, ($j | ConvertTo-Json -Depth 10), (New-Object System.Text.UTF8Encoding $false))"
     ],
     "pre_uninstall": [
         "# 安全删除目录联接（使用 .NET API，不穿透到目标目录）",
@@ -49,13 +59,13 @@
     "uninstaller": {
         "script": [
             "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
-            "Stop-Process -Name ZedG -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name Zed, ZedG -Force -ErrorAction SilentlyContinue",
             "Start-Sleep -Milliseconds 1500",
             "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
             "$appDir = Split-Path $dir -Parent",
             "$shell = New-Object -ComObject WScript.Shell",
             "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
-            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\ZedG.lnk\"",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Zed汉化版.lnk\"",
             "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
             "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
             "    }",
@@ -64,32 +74,42 @@
     },
     "bin": [
         [
-            "bin\\ZedG.exe",
-            "zedg"
+            "bin\\zed.exe",
+            "zed-i18n"
         ]
     ],
     "shortcuts": [
         [
-            "ZedG.exe",
-            "..\\ZedG"
+            "Zed.exe",
+            "..\\Zed汉化版"
         ]
     ],
     "notes": [
-        "ZedG 配置/扩展/主题等数据已持久化：",
+        "Zed 汉化版（社区本地化构建）数据已持久化：",
         "  - 设置/键映射/主题 → persist\\appdata（映射 %APPDATA%\\Zed）",
         "  - 数据库/扩展索引/语言服务器 → persist\\local（映射 %LOCALAPPDATA%\\Zed）",
-        "更新或重装时数据不会丢失。"
+        "更新或重装时数据不会丢失。",
+        "内置自动更新已关闭，升级请执行 scoop update Zed-i18n。"
     ],
     "checkver": {
-        "github": "https://github.com/x6nux/zed-globalization"
+        "url": "https://github.com/LI-NA/zed-i18n/releases/latest",
+        "regex": "/releases/tag/v([\\d.]+-i18n\\.\\d+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/x6nux/zed-globalization/releases/download/v$version/zedg-zh-cn-windows-x86_64-v$matchHead.zip"
+                "url": "https://github.com/LI-NA/zed-i18n/releases/download/v$version/Zed-i18n-windows-x86_64.zip",
+                "hash": {
+                    "url": "$baseurl/SHA256SUMS.txt",
+                    "regex": "([a-f0-9]{64})\\s+Zed-i18n-windows-x86_64\\.zip"
+                }
             },
             "arm64": {
-                "url": "https://github.com/x6nux/zed-globalization/releases/download/v$version/zedg-zh-cn-windows-aarch64-v$matchHead.zip"
+                "url": "https://github.com/LI-NA/zed-i18n/releases/download/v$version/Zed-i18n-windows-aarch64.zip",
+                "hash": {
+                    "url": "$baseurl/SHA256SUMS.txt",
+                    "regex": "([a-f0-9]{64})\\s+Zed-i18n-windows-aarch64\\.zip"
+                }
             }
         }
     }

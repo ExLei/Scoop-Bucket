@@ -48,7 +48,7 @@ scoop install exlei/{软件包ID}
 | mpv-lazy | 全格式视频播放懒人包，基于 mpv 播放器集成大量配置和脚本 | - |
 | Rayburst | 全功能下载管理器（原 Motrix Next），支持 HTTP/FTP/SFTP/BitTorrent/Magnet 及 HLS/DASH 流媒体下载 | `persist\RoamingData`, `persist\LocalData` |
 | HEU KMS Activator | KMS/OEM 智能激活工具，支持 Windows/Office 全系列版本一键激活 | - |
-| ZedG | Zed Editor（汉化版），基于 Rust 的高性能代码编辑器本地化版本 | `persist\appdata`, `persist\local` |
+| Zed-i18n | Zed 编辑器汉化版（社区本地化构建，内置简繁中文/日语/韩语等 13 种界面语言，支持 x64/arm64） | `persist\appdata`, `persist\local` |
 | Starlight GUI | 基于 C++/WinRT WinUI3 的 Windows 内核级工具箱，集成任务管理、文件管理、系统监控等功能 | `persist\StarlightGUI.json` |
 | Task Explorer | 高级任务管理器，深度洞察进程行为，支持内核驱动级监控 | `persist\TaskExplorer.ini` |
 | FFmpegFreeUI | FFmpeg 在 Windows 上的轻度专业交互外壳，收录大量参数，界面美观，交互友好 | `persist\Preset`, `persist\Plugin` |
