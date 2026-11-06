@@ -141,6 +141,16 @@ function Invoke-Git {
     return [pscustomobject]@{ ExitCode = $exitCode; Output = $output }
 }
 
+function Get-GitErrorDetail {
+    # git 报错可能多行且冗长：压成单行摘要，便于在日志与 Actions 注解里直接读出拒绝原因
+    param([string]$Output)
+    $lines = @($Output -split "`r?`n" | Where-Object { $_.Trim() } | Select-Object -First 3)
+    if (-not $lines) { return '(git 未返回输出)' }
+    $detail = $lines -join ' | '
+    if ($detail.Length -gt 500) { $detail = $detail.Substring(0, 500) + '…' }
+    return $detail
+}
+
 function Get-RelativePath {
     param([string]$Path)
     return [System.IO.Path]::GetRelativePath($script:RepoRoot, $Path).Replace('\', '/')
@@ -463,11 +473,12 @@ function Push-Commits {
         $push = Invoke-Git -Arguments @('push', 'origin', "HEAD:$script:DeliveryBranch") -AllowFailure
         if ($push.ExitCode -eq 0) { return $true }
 
-        Write-Log warn "推送失败（第 $attempt 次），尝试 rebase 远端提交后重试"
+        # 保留 git 原始报错：拒绝原因可能是真实冲突，也可能是平台侧故障（Git operations 降级），两者排查方向不同
+        Write-Log warn "推送失败（第 $attempt 次，exit $($push.ExitCode)）：$(Get-GitErrorDetail $push.Output)；尝试 rebase 远端提交后重试"
         $pull = Invoke-Git -Arguments @('pull', '--rebase', '--autostash', 'origin', $script:DeliveryBranch) -AllowFailure
         if ($pull.ExitCode -ne 0) {
             Invoke-Git -Arguments @('rebase', '--abort') -AllowFailure | Out-Null
-            Write-Log fail 'rebase 失败，本次运行剩余提交不再重试推送'
+            Write-Log fail "rebase 失败（exit $($pull.ExitCode)）：$(Get-GitErrorDetail $pull.Output)；本次运行剩余提交不再重试推送"
             break
         }
         Start-Sleep -Seconds (5 * $attempt)
