@@ -32,7 +32,10 @@
     "persist": "流氓软件克星数据",
     "checkver": {
         "script": [
-            "$releases = Invoke-RestMethod 'https://api.github.com/repos/aakk007/RogueCleaner/releases'",
+            "$headers = @{ Accept = 'application/vnd.github+json' }",
+            "# 注入 SCOOP_GH_TOKEN 时走认证请求（5000 次/小时）；未注入时退回匿名请求（60 次/小时，CI 共享出口 IP 易撞限额）",
+            "if ($env:SCOOP_GH_TOKEN) { $headers['Authorization'] = \"Bearer $($env:SCOOP_GH_TOKEN)\" }",
+            "$releases = Invoke-RestMethod 'https://api.github.com/repos/aakk007/RogueCleaner/releases' -Headers $headers",
             "# 跳过草稿，取最新发布（资产名含构建时间戳，无法用版本号直接构造 URL）",
             "$release = $releases | Where-Object { -not $_.draft } | Select-Object -First 1",
             "$version = $release.tag_name -replace '^v'",
