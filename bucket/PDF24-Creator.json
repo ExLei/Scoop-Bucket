@@ -1,5 +1,5 @@
 {
-    "version": "11.33.0",
+    "version": "11.34.0",
     "description": "PDF24 Creator - 免费离线的 PDF 工具箱，集成合并、拆分、压缩、转换、OCR、阅读器等工具（PDF 虚拟打印机需管理员权限安装）| Offline PDF toolbox with merge, split, compress, convert, OCR and reader tools",
     "homepage": "https://tools.pdf24.org/creator",
     "license": {
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.pdf24.org/pdf24-creator-11.33.0-x64.exe",
-            "hash": "ef55742c5c6ca0169fb2f7342d619bef4f4589311a012c02de516fd80315588e"
+            "url": "https://download.pdf24.org/pdf24-creator-11.34.0-x64.exe",
+            "hash": "7b638931845ce914f42e09cf62525141447c321962238783afb0de55c3965a32"
         },
         "arm64": {
-            "url": "https://download.pdf24.org/pdf24-creator-11.33.0-arm64.exe",
-            "hash": "ca31e0994521b12d9c019823c320cba17de261c436b54df15b28d2cc644000ba"
+            "url": "https://download.pdf24.org/pdf24-creator-11.34.0-arm64.exe",
+            "hash": "94e85284cf897aa8165968e5771ababfafbe3ca80075619b9d9fbf19a56fa398"
         }
     },
     "installer": {
