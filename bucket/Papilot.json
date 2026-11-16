@@ -1,0 +1,61 @@
+{
+    "version": "0.10.4",
+    "description": "AI 驱动的 LaTeX 排版编辑器，直接在排版后的 PDF 上编辑与审阅，无需手写 .tex 源码 | An AI-native LaTeX editor that works on the typeset PDF instead of the source",
+    "homepage": "https://papilot.ai",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/PapilotAI/papilot/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PapilotAI/papilot/releases/download/v0.10.4/Papilot-0.10.4-win-x64.exe",
+            "hash": "75fd927ff41db45f19973912e7a39948984306a25275d893cb3fff5d636d8ce8"
+        }
+    },
+    "installer": {
+        "script": [
+            "# NSIS 安装包：外层解出 $PLUGINSDIR\\app-64.7z，再二次解压出 Electron 应用目录",
+            "Expand-7zipArchive \"$dir\\$fname\" -Removal",
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+            "# 清理解包残留：$PLUGINSDIR 为 NSIS 插件目录，$R0 内含无用的卸载程序存根",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Remove-Item \"$dir\\`$R0\" -Recurse -Force -ErrorAction SilentlyContinue"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "# 结束进程（终止后等待文件句柄释放，避免文件锁定导致卸载失败）",
+            "Stop-Process -Name Papilot -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\Papilot.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Papilot.exe",
+            "..\\Papilot"
+        ]
+    ],
+    "notes": [
+        "用户数据（配置、任务、日志与运行时更新层）保存在 %APPDATA%\\Papilot，位于版本目录之外，scoop update 不会清空。",
+        "应用内「Download Updates…」只打开 GitHub 发布页，升级请使用 scoop update Papilot。"
+    ],
+    "checkver": {
+        "github": "https://github.com/PapilotAI/papilot"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PapilotAI/papilot/releases/download/v$version/Papilot-$version-win-x64.exe"
+            }
+        }
+    }
+}

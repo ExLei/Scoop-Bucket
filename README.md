@@ -68,6 +68,7 @@ scoop install exlei/{软件包ID}
 | optimizerDuck | 开源 Windows 优化工具，集成系统优化、隐私调整与内置管理工具（启动项、计划任务、磁盘清理、预装应用卸载），所有更改支持一键还原（支持 x64/arm64，需管理员权限） | `persist\local` |
 | Readest | 开源电子书阅读器，支持 EPUB/MOBI/AZW3/FB2/CBZ/PDF/TXT 等格式，内置双栏对照、TTS、翻译与多端同步（便携版，支持 x64/arm64） | `persist\Readest`, `persist\settings.json` |
 | QcClip | 纯 Rust + GPUI 原生渲染的高性能剪贴板管理工具（便携版，当前为 Beta 预发行版，支持 x64/arm64） | `persist\QcClipData` |
+| Papilot | AI 驱动的 LaTeX 排版编辑器，直接在排版后的 PDF 上编辑与审阅，无需手写 .tex 源码 | - |
 
 ### ExHyperV 依赖
 
