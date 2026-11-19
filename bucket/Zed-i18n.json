@@ -1,5 +1,5 @@
 {
-    "version": "1.28.1-i18n.1",
+    "version": "1.29.2-i18n.1",
     "description": "Zed 编辑器汉化版 —— 基于 LI-NA/zed-i18n 的社区本地化构建，内置简繁中文/日语/韩语等 13 种界面语言 | Localized builds of the Zed code editor",
     "homepage": "https://github.com/LI-NA/zed-i18n",
     "license": {
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.28.1-i18n.1/Zed-i18n-windows-x86_64.zip",
-            "hash": "1aec4105bad2ee38e0c42362d8ccc79cb8511b8648a85325ee3b504b0afa6607"
+            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.29.2-i18n.1/Zed-i18n-windows-x86_64.zip",
+            "hash": "96821269ae9f58cb1134e49171c97c8a52d9a55fab216e35cc18cb3898b3730c"
         },
         "arm64": {
-            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.28.1-i18n.1/Zed-i18n-windows-aarch64.zip",
-            "hash": "892558e9faa46ade1fbae912e25747c867f31f5ab40232225415af12f3808e5a"
+            "url": "https://github.com/LI-NA/zed-i18n/releases/download/v1.29.2-i18n.1/Zed-i18n-windows-aarch64.zip",
+            "hash": "9c0e8cd912d13c9dfcdea12723e212306e377adcdc07aeaad37a5d347ffc5e5f"
         }
     },
     "env_set": {
