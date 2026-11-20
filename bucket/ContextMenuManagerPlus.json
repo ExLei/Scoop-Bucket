@@ -1,5 +1,5 @@
 {
-    "version": "1.8.0",
+    "version": "1.8.1",
     "description": "Context Menu Manager Plus - Windows 右键菜单管理工具，支持新菜单监控、传统菜单管理、Win11 新菜单管理、Shell Extension 探测等功能 | A Windows context menu management tool with new menu monitoring",
     "homepage": "https://github.com/PLFJY/ContextMenuMgr",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/PLFJY/ContextMenuMgr/releases/download/v1.8.0/ContextMenuMgrPlus-1.8.0-framework-dependent-portable.zip",
-            "hash": "3c1bf3812c9c310203ea1524bd3141cba99be32a466fa4505160a5e681bbf8af"
+            "url": "https://github.com/PLFJY/ContextMenuMgr/releases/download/v1.8.1/ContextMenuMgrPlus-1.8.1-framework-dependent-portable.zip",
+            "hash": "7a284106586699c16cf17f207ed48086ca4d8116ece90d6ce08bbff8ed844e69"
         }
     },
     "uninstaller": {
