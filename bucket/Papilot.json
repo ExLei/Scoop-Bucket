@@ -1,5 +1,5 @@
 {
-    "version": "0.13.0",
+    "version": "0.14.0",
     "description": "AI 驱动的 LaTeX 排版编辑器，直接在排版后的 PDF 上编辑与审阅，无需手写 .tex 源码 | An AI-native LaTeX editor that works on the typeset PDF instead of the source",
     "homepage": "https://papilot.ai",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/PapilotAI/papilot/releases/download/v0.13.0/Papilot-0.13.0-win-x64.exe",
-            "hash": "70883f1ef5233b7ec8bab45e5c0b125d19014843641b2fc7b218518f59ca37f7"
+            "url": "https://github.com/PapilotAI/papilot/releases/download/v0.14.0/Papilot-0.14.0-win-x64.exe",
+            "hash": "f4b1f5433d5254d1a1e532e79ee1d5b6ddc7ee0321df028f2472bb0e5535baec"
         }
     },
     "installer": {
