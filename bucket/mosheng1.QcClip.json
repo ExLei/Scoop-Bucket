@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-beta.8",
+    "version": "1.0.0-beta.9",
     "description": "QcClip - 纯 Rust + GPUI 原生渲染的高性能剪贴板管理工具 (便携版，Beta 预发行版) | A high-performance clipboard manager built with pure Rust and GPUI (Portable, Beta)",
     "homepage": "https://github.com/mosheng1/QcClip",
     "license": {
@@ -8,13 +8,13 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.8/QcClip_1.0.0-beta.8_x64-portable.zip",
-            "hash": "715fe14cad85ece512429bf686ad932841f37fe45efc8858ee932db20e7946a6",
+            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.9/QcClip_1.0.0-beta.9_x64-portable.zip",
+            "hash": "19b6607b4814017b0ace7935ea512ec4f746949793fc4396b52b1bcf54054a54",
             "extract_dir": "QcClip"
         },
         "arm64": {
-            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.8/QcClip_1.0.0-beta.8_arm64-portable.zip",
-            "hash": "12411a258f3086b2a401f0b88bc55d702c63644f9b7ecd9dabc18754ea0a8dff",
+            "url": "https://github.com/mosheng1/QcClip/releases/download/v1.0.0-beta.9/QcClip_1.0.0-beta.9_arm64-portable.zip",
+            "hash": "3699f19e496b7892dfd2a839ea030d831a0c141d629321c4187ee4d0a31810c3",
             "extract_dir": "QcClip"
         }
     },
